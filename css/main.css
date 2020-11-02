@@ -1,6 +1,9 @@
 .main {
-    display: flex;
+    display: grid;
     align-content: center;
+    width: 100%;
+    font-size: 20px;
+    grid-template-rows: 60px auto;
 }
 
 .red {
@@ -8,5 +11,19 @@
 }
 
 .nav {
+    display: grid;
+    background: LightSkyblue;
+    grid-template-columns: auto 100px 100px;
+}
 
+.align-center {
+    align-self: center;
+}
+
+.nav-element {
+    padding-left: 35px;
+}
+
+.main-content-title {
+    justify-self: center;
 }

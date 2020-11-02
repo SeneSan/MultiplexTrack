@@ -1,0 +1,16 @@
+<?php if ($_COOKIE['user_role'] == 0) : ?>
+<div class="form-popup" id="myForm">
+    <form action="/app/code/Helpers/UserHelper.php" class="form-container" method="post">
+        <h1>Login</h1>
+
+        <label for="username"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="username" required>
+
+        <label for="psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="psw" required>
+
+        <button type="submit" class="btn" name="login">Login</button>
+        <button class="btn cancel" onclick="closeForm()">Close</button>
+    </form>
+</div>
+<?php endif;?>

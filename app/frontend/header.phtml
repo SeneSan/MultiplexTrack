@@ -1,0 +1,9 @@
+<?php if ($_COOKIE['user_role'] == 0) :?>
+    <nav class="nav">
+        <div class="red align-center nav-element">Multiplex Track</div>
+        <div class="align-center">No User</div>
+        <div class="align-center">
+            <button class="open-button" onclick="openForm()">Login</button>
+        </div>
+    </nav>
+<?php endif; include '/Users/macbook/PhpstormProjects/MultiplexTrack/app/frontend/User/login.phtml' ?>

@@ -4,9 +4,15 @@ namespace Models;
 
 class User
 {
+    const NOUSER = 0;
+    const ADMIN = 1;
+    const USER = 2;
+
     private $username;
     private $email;
+    private $password;
     private $phonenumber;
+    private $type;
 
     public function __construct()
     {
