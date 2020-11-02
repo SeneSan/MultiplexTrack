@@ -18,6 +18,15 @@
     z-index: 9;
 }
 
+.form-popup .registration {
+    display: none;
+    position: fixed;
+    top: 75px;
+    right: 15px;
+    border: 3px solid #f1f1f1;
+    z-index: 9;
+}
+
 /* Add styles to the form container */
 .form-container {
     max-width: 300px;
@@ -53,8 +62,8 @@
 }
 
 /* Add a red background color to the cancel button */
-.form-container .cancel {
-    background-color: red;
+.form-container .button-registration {
+    background-color: dodgerblue;
 }
 
 /* Add some hover effects to buttons */

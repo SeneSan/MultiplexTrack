@@ -9,7 +9,7 @@ class DatabaseController
 {
     public static function getConnection() {
 
-        $configurationFile = simplexml_load_file('local.xml');
+        $configurationFile = simplexml_load_file('../../../local.xml');
 
         $dbHost = $configurationFile->db_host;
         $dbName = $configurationFile->db_name;

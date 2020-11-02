@@ -1,5 +1,5 @@
 <?php if ($_COOKIE['user_role'] == 0) : ?>
-<div class="form-popup" id="myForm">
+<div class="form-popup" id="myLoginForm">
     <form action="/app/code/Helpers/UserHelper.php" class="form-container" method="post">
         <h1>Login</h1>
 
@@ -10,7 +10,27 @@
         <input type="password" placeholder="Enter Password" name="psw" required>
 
         <button type="submit" class="btn" name="login">Login</button>
-        <button class="btn cancel" onclick="closeForm()">Close</button>
+        <button class="btn button-registration" onclick="openRegistrationForm()">Registration</button>
+    </form>
+</div>
+<div class="form-popup registration" id="myRegistrationForm">
+    <form action="/app/code/Helpers/UserHelper.php" class="form-container" method="post">
+        <h1>Registration</h1>
+
+        <label for="reg_username"><b>Username</b></label>
+        <input type="text" placeholder="Enter Username" name="reg_username" required>
+
+        <label for="reg_psw"><b>Password</b></label>
+        <input type="password" placeholder="Enter Password" name="reg_psw" required>
+
+        <label for="reg_email"><b>Email</b></label>
+        <input type="text" placeholder="Enter Email" name="reg_email" required>
+
+        <label for="reg_phone"><b>Phonenumber</b></label>
+        <input type="text" placeholder="Enter Phonenumber" name="reg_phone">
+
+        <button type="submit" class="btn" name="register">Register</button>
+        <button class="btn button-registration" onclick="openLoginForm()">Login to App</button>
     </form>
 </div>
 <?php endif;?>
