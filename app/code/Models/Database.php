@@ -1,15 +1,15 @@
 <?php
 
 
-namespace Controllers;
+namespace Models;
 
 use PDO;
 
-class DatabaseController
+class Database
 {
     public static function getConnection() {
 
-        $configurationFile = simplexml_load_file('../../../local.xml');
+        $configurationFile = simplexml_load_file(__ROOT__ . 'local.xml');
 
         $dbHost = $configurationFile->db_host;
         $dbName = $configurationFile->db_name;

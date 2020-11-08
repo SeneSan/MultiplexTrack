@@ -1,6 +1,5 @@
-<?php if ($_COOKIE['user_role'] == 0) : ?>
 <div class="form-popup" id="myLoginForm">
-    <form action="/app/code/Helpers/UserHelper.php" class="form-container" method="post">
+    <form action="/user/login" class="form-container" method="post">
         <h1>Login</h1>
 
         <label for="username"><b>Username</b></label>
@@ -14,7 +13,7 @@
     </form>
 </div>
 <div class="form-popup registration" id="myRegistrationForm">
-    <form action="/app/code/Helpers/UserHelper.php" class="form-container" method="post">
+    <form action="/user/register" class="form-container" method="post">
         <h1>Registration</h1>
 
         <label for="reg_username"><b>Username</b></label>
@@ -33,4 +32,3 @@
         <button class="btn button-registration" onclick="openLoginForm()">Login to App</button>
     </form>
 </div>
-<?php endif;?>

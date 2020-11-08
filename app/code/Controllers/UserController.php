@@ -2,22 +2,27 @@
 
 namespace Controllers;
 
+use Models\User;
+
 class UserController
 {
     public function login() {
-        //TODO
+        if (isset($_POST['login'])) {
+            $_SESSION['user'] = User::login();
+//            header('location: /?'. htmlspecialchars(SID) . '');
+            header('location: /');
+            exit();
+        }
     }
 
-    public static function register($username, $email, $password, $phonenumber) {
-        $pdo = DatabaseController::getConnection();
+    public function register() {
 
-        $passHash = password_hash($password, PASSWORD_DEFAULT);
-
-        $sql = "INSERT INTO users (username, password, email, phonenumber, type) VALUES (?, ?, ?, ?, ?)";
-        try {
-            $pdo->prepare($sql)->execute([$username, $passHash, $email, $phonenumber, 1]);
-        } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        if (isset($_POST['register'])) {
+            User::register();
         }
+    }
+
+    public function logout() {
+        User::logout();
     }
 }

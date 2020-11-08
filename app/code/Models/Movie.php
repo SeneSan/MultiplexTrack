@@ -125,4 +125,29 @@ class Movie
     {
         $this->description = $description;
     }
+
+    public static function getMovies() {
+
+        $pdo = Database::getConnection();
+        $sql = "SELECT * FROM movies";
+
+        try {
+            $query = $pdo->prepare($sql);
+            $query->execute();
+            $results = $query->fetchAll();
+
+            $view = include __ROOT__ . 'app/frontend/Movies/movies-list.phtml';
+
+            return [
+                'message' => 'Success',
+                'html' => $view
+            ];
+
+
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+
+    }
 }

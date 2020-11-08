@@ -1,4 +1,9 @@
 <?php
+
+define('__ROOT__', '/Users/macbook/PhpstormProjects/MultiplexTrack/');
+
 require __DIR__ . '/vendor/autoload.php';
 
-App::run();
+$frontController = new FrontController();
+
+$frontController->run();

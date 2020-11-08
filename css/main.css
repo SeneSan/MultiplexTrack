@@ -1,19 +1,39 @@
 .main {
     display: grid;
-    align-content: center;
+    align-self: center;
     width: 100%;
     font-size: 20px;
     grid-template-rows: 60px auto;
 }
 
-.red {
-    color: red;
+.main-content {
+    display: grid;
+    grid-template-rows: 100px auto;
+    width: 90%;
+    justify-self: center;
 }
 
-.nav {
+.red {
+    color: red;
+    cursor: pointer;
+}
+
+.nav-no-user {
     display: grid;
     background: LightSkyblue;
     grid-template-columns: auto 100px 100px;
+}
+
+.nav-user {
+    display: grid;
+    background: LightSkyblue;
+    grid-template-columns: auto 120px 100px 100px 35px;
+}
+
+.nav-admin {
+    display: grid;
+    background: LightSkyblue;
+    grid-template-columns: auto 120px 100px 100px 100px 100px 100px 100px 35px;
 }
 
 .align-center {
@@ -22,8 +42,13 @@
 
 .nav-element {
     padding-left: 35px;
+    padding-right: 35px;
 }
 
 .main-content-title {
+    justify-self: center;
+}
+
+.grid-justify-center {
     justify-self: center;
 }

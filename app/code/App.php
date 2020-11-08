@@ -15,10 +15,6 @@ class App
 
     public static function run(){
 
-        if (!isset($_COOKIE['user_role'])) {
-            setcookie('user_role', 0, time() + 48400);
-        }
-
         self::addHead();
         self::addHeader();
         self::addBody();

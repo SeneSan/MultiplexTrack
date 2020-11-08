@@ -1,0 +1,33 @@
+<div class="main-movies-grid">
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Type</th>
+                <th>Duration</th>
+                <th>Categories</th>
+                <th>Poster</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+        <?php foreach ($results as $result) : // $results is from Movie.php method getMovies ?>
+            <tr>
+                <td><?php echo $result['id'] ?></td>
+                <td><?php echo $result['title'] ?></td>
+                <td><?php echo $result['type'] ?></td>
+                <td><?php echo $result['duration'] ?></td>
+                <td><?php echo $result['categories'] ?></td>
+                <td><?php echo $result['poster'] ?></td>
+                <td><?php echo $result['description'] ?></td>
+            </tr>
+        <?php endforeach; ?>
+        </tbody>
+    </table>
+    <?php if (empty($results)) :?>
+        <p>No movies available! Please add some movies.</p>
+    <?php endif; ?>
+    <button onclick="displayModal()">Add Movie</button>
+</div>
+<?php include __ROOT__. 'app/frontend/Movies/movies-modal.phtml'; ?>

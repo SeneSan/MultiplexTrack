@@ -1,0 +1,29 @@
+.week-grid {
+    display: grid;
+    justify-self: center;
+    grid-template-columns: 200px 200px 200px 200px 200px 200px 200px;
+    grid-column-gap: 20px;
+}
+
+.day-grid {
+    display: grid;
+    grid-template-rows: 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px 60px;
+    background-color: antiquewhite;
+}
+
+.time-slot-hour-grid {
+    display: grid;
+    grid-template-columns: 30px auto;
+    font-size: 12px;
+}
+
+.blue-time {
+    background-color: lightskyblue;
+    justify-content: center;
+}
+
+.add-movie-grid {
+    display: grid;
+    grid-template-columns: 140px 30px;
+    height: 30px;
+}

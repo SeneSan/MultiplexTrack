@@ -1,0 +1,21 @@
+<div id="schedule-container" class="week-grid">
+    <?php for ($i = 1; $i <= 7; $i++) : ?>
+    <div id="day-<?php echo $i?>" class="day-grid">
+        <?php for ($j = 9; $j <= 17; $j++) : ?>
+        <div id="day-<?php echo $i . '-hour-' . $j . '-00'?>" class="time-slot-hour-grid">
+            <div class="blue-time"><?php echo $j?>:00</div>
+            <div class="add-movie-grid">
+            <?php if ($j == 9) : ?>
+                <input type="text" />
+                <button>+</button>
+            <?php endif; ?>
+            </div>
+        </div>
+        <div id="day-<?php echo $i . '-hour-' . $j . '-30'?>" class="time-slot-hour-grid">
+            <div class="blue-time"><?php echo $j?>:30</div>
+            <div class="add-movie-grid"></div>
+        </div>
+        <?php endfor; ?>
+    </div>
+    <?php endfor; ?>
+</div>
