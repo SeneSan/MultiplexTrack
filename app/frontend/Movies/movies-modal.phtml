@@ -1,15 +1,15 @@
 <div id="add-movie-modal" class="movie-modal">
-    <form action="" class="movie-modal-content">
+    <form id ="add-movie-form" class="movie-modal-content" enctype="multipart/form-data">
         <div class="field-horizontal-grid">
             <span></span>
             <h3 class="grid-justify-center">Add Movie</h3>
-            <span class="close" onclick="closeModal();">&times;</span>
+            <span class="close" onclick="closeModal()">&times;</span>
         </div>
         <label for="title">Movie Title
-            <input type="text" id="title" name="title" class="field-width" placeholder="Insert movie title">
+            <input type="text" id="title" name="title" class="field-width" placeholder="Insert movie title" required>
         </label>
         <label for="year">Movie Year
-            <input type="number" id="year" name="year" placeholder="Launch year">
+            <input type="number" id="year" name="year" placeholder="Launch year" required>
         </label>
         <label for="movie-type">Movie Format
             <select name="type" id="movie-type">
@@ -18,10 +18,10 @@
             </select>
         </label>
         <label for="duration">Time Duration
-            <input type="text" id="duration" name="duration" placeholder="Movie Duration in minutes">
+            <input type="text" id="duration" name="duration" placeholder="Movie Duration in minutes" required>
         </label>
         <label for="categories">Movie Categories
-            <input type="text" id="categories" name="categories" class="field-width" placeholder="Insert categories separated by commas">
+            <input type="text" id="categories" name="categories" class="field-width" placeholder="Insert categories separated by commas" required>
         </label>
         <label for="poster">Movie Poster
             <input type="file" id="poster" name="poster">
@@ -30,6 +30,7 @@
             <label for="description">Movie Short Description</label>
             <textarea name="description" id="description" cols="30" rows="10"></textarea>
         </div>
-        <button type="submit">Add Movie</button>
+        <button id="submit-button" type="submit" onclick="addMovie()">Add Movie</button>
+        <div id="add-movie-modal-message" class="grid-justify-center"></div>
     </form>
 </div>

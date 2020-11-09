@@ -70,3 +70,8 @@ table, th, td {
     text-decoration: none;
     cursor: pointer;
 }
+
+#add-movie-modal-message {
+    display: none;
+    height: 20px;
+}

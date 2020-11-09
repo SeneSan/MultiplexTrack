@@ -6,13 +6,13 @@ namespace Models;
 
 class Movie
 {
-    private $title;
-    private $year;
-    private $type;
-    private $timeDuration;
-    private $category;
-    private $poster;
-    private $description;
+    private string $title;
+    private int $year;
+    private string $type;
+    private int $duration;
+    private string $categories;
+    private string $poster;
+    private string $description;
 
     /**
      * @return mixed
@@ -65,33 +65,33 @@ class Movie
     /**
      * @return mixed
      */
-    public function getTimeDuration()
+    public function getDuration()
     {
-        return $this->timeDuration;
+        return $this->duration;
     }
 
     /**
-     * @param mixed $timeDuration
+     * @param $duration
      */
-    public function setTimeDuration($timeDuration)
+    public function setDuration($duration)
     {
-        $this->timeDuration = $timeDuration;
+        $this->duration = $duration;
     }
 
     /**
      * @return mixed
      */
-    public function getCategory()
+    public function getCategories()
     {
-        return $this->category;
+        return $this->categories;
     }
 
     /**
-     * @param mixed $category
+     * @param $categories
      */
-    public function setCategory($category)
+    public function setCategories($categories)
     {
-        $this->category = $category;
+        $this->categories = $categories;
     }
 
     /**
@@ -143,11 +143,98 @@ class Movie
                 'html' => $view
             ];
 
-
-
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
+    }
 
+    public static function addMovie(Movie $movie) {
+        $pdo = Database::getConnection();
+
+        $sql = "INSERT INTO movies (title, year, type, duration, categories, poster, description) ";
+        $sql .= "VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            $query = $pdo->prepare($sql);
+            $query->execute([$movie->title, $movie->year, $movie->type, $movie->duration, $movie->categories, $movie->poster, $movie->description]);
+            if ($query) {
+                return [
+                    'error' => false,
+                    'message' => 'Movie was added successfully!'
+                ];
+            }
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function uploadPoster() {
+        $target_dir = "images/";
+        $target_file = $target_dir . basename($_FILES["poster"]["name"]);
+        $uploadOk = 1;
+        $imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
+
+        // Check if image file is a actual image or fake image
+        if(isset($_POST["submit"])) {
+            $check = getimagesize($_FILES["poster"]["tmp_name"]);
+            if($check !== false) {
+                $uploadOk = 1;
+            } else {
+                $uploadOk = 0;
+                $result = [
+                    'error' => 'true',
+                    'message' => 'File is not an image!'
+                ];
+                echo json_encode($result);
+                exit();
+            }
+        }
+
+        // Check if file already exists
+        if (file_exists($target_file)) {
+            $uploadOk = 0;
+            $result = [
+                'error' => 'true',
+                'message' => 'File with the same name already exists!'
+            ];
+            echo json_encode($result);
+            exit();
+        }
+
+        // Check file size
+        if ($_FILES["poster"]["size"] > 2000000) {
+            $uploadOk = 0;
+            $result = [
+                'error' => 'true',
+                'message' => 'Sorry, file is too large!'
+            ];
+            echo json_encode($result);
+            exit();
+        }
+
+        // Allow certain file formats
+        if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+            && $imageFileType != "gif" ) {
+            $uploadOk = 0;
+            $result = [
+                'error' => 'true',
+                'message' => 'Sorry, only JPG, JPEG, PNG & GIF files are allowed.'
+            ];
+            echo json_encode($result);
+            exit();
+        }
+
+        // Check if $uploadOk is set to 0 by an error
+        if ($uploadOk == 0) {
+            $result = [
+                'error' => 'true',
+                'message' => 'Sorry, your file was not uploaded for some reason.'
+            ];
+            echo json_encode($result);
+            exit();
+        // if everything is ok, try to upload file
+        } else {
+            move_uploaded_file($_FILES["poster"]["tmp_name"], $target_file);
+        }
     }
 }
