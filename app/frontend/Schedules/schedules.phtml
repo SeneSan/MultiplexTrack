@@ -2,19 +2,25 @@
     <?php for ($i = 1; $i <= 7; $i++) : ?>
     <div id="day-<?php echo $i?>" class="day-grid">
         <?php for ($j = 9; $j <= 17; $j++) : ?>
-        <div id="day-<?php echo $i . '-hour-' . $j . '-00'?>" class="time-slot-hour-grid">
-            <div class="blue-time"><?php echo $j?>:00</div>
-            <div class="add-movie-grid">
-            <?php if ($j == 9) : ?>
-                <input type="text" />
-                <button>+</button>
-            <?php endif; ?>
+            <?php for ($x = 1; $x <= 2; $x++) : ?>
+            <div id="day-<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>" class="time-slot-hour-grid">
+                <div class="blue-time"><?php echo $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?></div>
+                <?php if (($j == 9) && ($x == 1)) : ?>
+                <div id="add-movie-schedule-container-day-<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>">
+                    <div class="add-movie-grid">
+                        <input type="text"
+                               onkeyup="
+                                   showDropdown('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
+                                   getMovieByTitle('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
+                                   "
+                               onblur="hideDropDownOnBlur()" />
+                        <button>+</button>
+                    </div>
+                    <div class="add-movie-dropdown" id="add-movie-dropdown-<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>"></div>
+                </div>
+                <?php endif; ?>
             </div>
-        </div>
-        <div id="day-<?php echo $i . '-hour-' . $j . '-30'?>" class="time-slot-hour-grid">
-            <div class="blue-time"><?php echo $j?>:30</div>
-            <div class="add-movie-grid"></div>
-        </div>
+            <?php endfor; ?>
         <?php endfor; ?>
     </div>
     <?php endfor; ?>

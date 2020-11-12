@@ -27,3 +27,12 @@
     grid-template-columns: 140px 30px;
     height: 30px;
 }
+
+/* Add movie drop-down for scheduler */
+.add-movie-dropdown {
+    position: relative;
+    display: none;
+    width: auto;
+    height: 200px;
+    background-color: #aaaaaa;
+}

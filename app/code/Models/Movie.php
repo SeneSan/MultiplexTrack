@@ -4,8 +4,11 @@
 namespace Models;
 
 
+use PDO;
+
 class Movie
 {
+    private int $id;
     private string $title;
     private int $year;
     private string $type;
@@ -13,6 +16,22 @@ class Movie
     private string $categories;
     private string $poster;
     private string $description;
+
+    /**
+     * @return int
+     */
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    /**
+     * @param int $id
+     */
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
 
     /**
      * @return mixed
@@ -235,6 +254,33 @@ class Movie
         // if everything is ok, try to upload file
         } else {
             move_uploaded_file($_FILES["poster"]["tmp_name"], $target_file);
+        }
+    }
+
+    public static function getMovieByTitle($title) {
+        $pdo = Database::getConnection();
+        $sql = "SELECT * FROM movies WHERE title LIKE ?";
+
+        try {
+            $query = $pdo->prepare($sql);
+            $query->execute(['%' . $title . '%']);
+
+            $movies = [];
+
+            while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
+                $movie = [];
+
+                $movie['id'] = $result['id'];
+                $movie['title'] = $result['title'];
+                $movie['duration'] = $result['duration'];
+
+                $movies[] = $movie;
+            }
+
+            return $movies;
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 }

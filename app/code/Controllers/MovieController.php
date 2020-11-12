@@ -4,7 +4,6 @@
 namespace Controllers;
 
 
-use Models\Database;
 use Models\Movie;
 
 class MovieController
@@ -30,5 +29,23 @@ class MovieController
         Movie::uploadPoster();
 
         echo json_encode($result);
+    }
+
+    public function getMovieByTitle($title) {
+
+        $movies = Movie::getMovieByTitle($title);
+        header('Content-type:application/json;charset=utf-8');
+
+        if ($movies) {
+            echo json_encode([
+                'error' => false,
+                'movies' => $movies
+            ]);
+        } else {
+            echo json_encode([
+                'error' => false,
+                'message' => 'No movies were found'
+            ]);
+        }
     }
 }
