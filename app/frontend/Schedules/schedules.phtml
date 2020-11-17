@@ -13,8 +13,8 @@
                                    showDropdown('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
                                    getMovieByTitle('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
                                    "
-                               onblur="hideDropDownOnBlur()" />
-                        <button>+</button>
+                               />
+                        <button onclick="scheduleMovie('<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>')">+</button>
                     </div>
                     <div class="add-movie-dropdown" id="add-movie-dropdown-<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>"></div>
                 </div>

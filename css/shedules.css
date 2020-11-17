@@ -15,6 +15,9 @@
     display: grid;
     grid-template-columns: 30px auto;
     font-size: 12px;
+    color: #555555;
+    position: relative;
+    border-bottom: solid black 0.5px;
 }
 
 .blue-time {
@@ -30,9 +33,38 @@
 
 /* Add movie drop-down for scheduler */
 .add-movie-dropdown {
+    z-index: 1;
     position: relative;
     display: none;
     width: auto;
-    height: 200px;
+    max-height: 200px;
     background-color: #aaaaaa;
+    overflow-y: auto;
+}
+
+.drop-down-item {
+    font-size: 13px;
+    display: grid;
+    grid-template-columns: auto 20px;
+}
+
+.drop-down-item:hover {
+    background-color: #f1f1f1;
+    cursor: pointer;
+}
+
+.overlay-scheduled-movie {
+    background-color: lightseagreen;
+    border-radius: 5px;
+    border: solid black 1px;
+    z-index: 2;
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0.3;
+    width: 200px;
+    text-align: center;
+    vertical-align: middle;
+    font-size: large;
+    color: black;
 }
