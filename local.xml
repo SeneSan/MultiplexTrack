@@ -1,7 +1,0 @@
-<?xml version='1.0' standalone='yes'?>
-<database>
-    <db_host>127.0.0.1</db_host>
-    <db_name>multiplex</db_name>
-    <db_user>sene</db_user>
-    <db_pass>sene</db_pass>
-</database>
