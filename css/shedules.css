@@ -57,14 +57,26 @@
     background-color: lightseagreen;
     border-radius: 5px;
     border: solid black 1px;
-    z-index: 2;
+    z-index: 1;
     position: absolute;
     top: 0;
     left: 0;
     opacity: 0.3;
     width: 200px;
-    text-align: center;
-    vertical-align: middle;
+    display: grid;
+    grid-template-rows: auto 25px;
     font-size: large;
     color: black;
+    align-items: center;
+}
+
+.overlay-movie-title {
+    text-align: center;
+    vertical-align: middle;
+    justify-content: center;
+}
+
+.remove-overlay-button:hover {
+    color: red;
+    cursor: pointer;
 }

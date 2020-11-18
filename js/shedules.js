@@ -71,27 +71,41 @@ function getMovieByTitle(dropdownId) {
 
 function scheduleMovie(timeSlot) {
     let addToTimeSlot = document.querySelector('[id=\"day-' + timeSlot + '\"]');
-    let form = document.querySelector('[id=\"add-movie-schedule-container-day-' + timeSlot + '\"]');
     let input = document.querySelector('[id=\"add-movie-schedule-container-day-' + timeSlot + '\"] input');
 
     if (input.getAttribute('movie-duration')) {
         let overlay = document.createElement('div');
         overlay.className = 'overlay-scheduled-movie';
         overlay.style.height = input.getAttribute('movie-duration') * 2 + 'px';
-        overlay.style.lineHeight = input.getAttribute('movie-duration') * 2 + 'px';
-        overlay.innerText = input.value;
-        form.style.display = 'none';
+
+        // Add overlay movie title
+        let movieTitle = document.createElement('div');
+        movieTitle.innerText = input.value;
+        movieTitle.className = 'overlay-movie-title';
+
+        // Add overlay remove button
+        let removeButton = document.createElement('div');
+        removeButton.innerText = 'X';
+        removeButton.style.paddingRight = '8.5px';
+        removeButton.style.textAlign = 'right';
+        removeButton.className = 'remove-overlay-button';
+        removeButton.onclick = function () {
+            overlay.remove();
+            cloneTimeSlotForm(getTimeDuration(timeSlot, input.getAttribute('movie-duration')), timeSlot);
+        };
+
+        overlay.appendChild(movieTitle);
+        overlay.appendChild(removeButton);
 
         addToTimeSlot.appendChild(overlay);
 
-        cloneTimeSlotForm(timeSlot, input.getAttribute('movie-duration'));
+        cloneTimeSlotForm(timeSlot, getTimeDuration(timeSlot, input.getAttribute('movie-duration')));
     }
 }
 
-function cloneTimeSlotForm(timeSlot, duration) {
-    let nextTimeSlot = getTimeDuration(timeSlot, duration);
+function cloneTimeSlotForm(currentTimeSlot, nextTimeSlot) {
 
-    let form = document.querySelector('[id=\"add-movie-schedule-container-day-' + timeSlot + '\"]');
+    let form = document.querySelector('[id=\"add-movie-schedule-container-day-' + currentTimeSlot + '\"]');
     let newForm = form.cloneNode(true);
     newForm.id = 'add-movie-schedule-container-day-' + nextTimeSlot;
     newForm.children[0].children[0].setAttribute('onkeyup', "showDropdown('day-" + nextTimeSlot + "'); getMovieByTitle('day-"+ nextTimeSlot + "');");
@@ -101,6 +115,8 @@ function cloneTimeSlotForm(timeSlot, duration) {
     newForm.children[0].children[1].setAttribute('onclick', "scheduleMovie('" + nextTimeSlot + "');");
     newForm.children[1].id = 'add-movie-dropdown-day-' + nextTimeSlot;
     newForm.style.display = 'block';
+
+    form.remove();
 
     let nextTimeSlotParent = document.querySelector('[id=\"day-' + nextTimeSlot + '\"]');
     nextTimeSlotParent.appendChild(newForm);
