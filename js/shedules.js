@@ -8,8 +8,7 @@ function getEmptySchedule() {
             alert( 'Error: ' + xhr.status);
             return;
         }
-        var response = xhr.response;
-        document.getElementById('main-content').innerHTML = response;
+        document.getElementById('main-content').innerHTML = xhr.response;
     }
 }
 
@@ -72,6 +71,9 @@ function getMovieByTitle(dropdownId) {
 function scheduleMovie(timeSlot) {
     let addToTimeSlot = document.querySelector('[id=\"day-' + timeSlot + '\"]');
     let input = document.querySelector('[id=\"add-movie-schedule-container-day-' + timeSlot + '\"] input');
+    let form = document.querySelector('[id=\"add-movie-schedule-container-day-' + timeSlot + '\"]');
+
+    let nextTimeSlot = getTimeDuration(timeSlot, input.getAttribute('movie-duration'));
 
     if (input.getAttribute('movie-duration')) {
         let overlay = document.createElement('div');
@@ -91,7 +93,13 @@ function scheduleMovie(timeSlot) {
         removeButton.className = 'remove-overlay-button';
         removeButton.onclick = function () {
             overlay.remove();
-            cloneTimeSlotForm(getTimeDuration(timeSlot, input.getAttribute('movie-duration')), timeSlot);
+            if (checkNextTimeSlot(nextTimeSlot)) {
+                cloneTimeSlotForm(nextTimeSlot, timeSlot);
+            } else {
+                input.value = '';
+                form.style.display = 'block';
+            }
+            displayPreviousRemoveButton(timeSlot.substr(0, 1));
         };
 
         overlay.appendChild(movieTitle);
@@ -99,27 +107,41 @@ function scheduleMovie(timeSlot) {
 
         addToTimeSlot.appendChild(overlay);
 
-        cloneTimeSlotForm(timeSlot, getTimeDuration(timeSlot, input.getAttribute('movie-duration')));
+        cloneTimeSlotForm(timeSlot, nextTimeSlot);
+
+        onlyShowLastRemoveButton(timeSlot.substr(0, 1));
     }
 }
 
 function cloneTimeSlotForm(currentTimeSlot, nextTimeSlot) {
 
     let form = document.querySelector('[id=\"add-movie-schedule-container-day-' + currentTimeSlot + '\"]');
+
+    if (document.querySelector('[id=\"day-' + nextTimeSlot + '\"]')) {
+
+        let newForm = createTimeSlotForm(nextTimeSlot, form);
+
+        form.remove();
+
+        let nextTimeSlotParent = document.querySelector('[id=\"day-' + nextTimeSlot + '\"]');
+        nextTimeSlotParent.appendChild(newForm);
+    } else {
+        form.style.display = 'none';
+    }
+}
+
+function createTimeSlotForm(timeSlot, form) {
     let newForm = form.cloneNode(true);
-    newForm.id = 'add-movie-schedule-container-day-' + nextTimeSlot;
-    newForm.children[0].children[0].setAttribute('onkeyup', "showDropdown('day-" + nextTimeSlot + "'); getMovieByTitle('day-"+ nextTimeSlot + "');");
+
+    newForm.id = 'add-movie-schedule-container-day-' + timeSlot;
+    newForm.children[0].children[0].setAttribute('onkeyup', "showDropdown('day-" + timeSlot + "'); getMovieByTitle('day-"+ timeSlot + "');");
     newForm.children[0].children[0].value = '';
     newForm.children[0].children[0].removeAttribute('movie-id');
     newForm.children[0].children[0].removeAttribute('movie-duration');
-    newForm.children[0].children[1].setAttribute('onclick', "scheduleMovie('" + nextTimeSlot + "');");
-    newForm.children[1].id = 'add-movie-dropdown-day-' + nextTimeSlot;
-    newForm.style.display = 'block';
+    newForm.children[0].children[1].setAttribute('onclick', "scheduleMovie('" + timeSlot + "');");
+    newForm.children[1].id = 'add-movie-dropdown-day-' + timeSlot;
 
-    form.remove();
-
-    let nextTimeSlotParent = document.querySelector('[id=\"day-' + nextTimeSlot + '\"]');
-    nextTimeSlotParent.appendChild(newForm);
+    return newForm;
 }
 
 function getTimeDuration(timeSlot, duration) {
@@ -136,4 +158,25 @@ function getTimeDuration(timeSlot, duration) {
     } else if (timeDuration % 60 > 30) {
         return day + '-hour-' + Math.floor(timeDuration / 60 + 1) + ':00';
     }
+}
+
+function onlyShowLastRemoveButton(day) {
+    let buttons = document.querySelectorAll('[id="day-' + day + '"] .overlay-scheduled-movie');
+    for (let i = 0; i < buttons.length - 1; i++) {
+        buttons[i].children[1].style.display = 'none';
+    }
+}
+
+function displayPreviousRemoveButton(day) {
+    if (document.querySelectorAll('[id="day-' + day + '"] .overlay-scheduled-movie')) {
+        let buttons = document.querySelectorAll('[id="day-' + day + '"] .overlay-scheduled-movie');
+        buttons[buttons.length - 1].children[1].style.display = 'block';
+    }
+}
+
+function checkNextTimeSlot(nextTimeSlot) {
+    if (document.querySelector('[id=\"day-' + nextTimeSlot + '\"]')) {
+        return true;
+    }
+    return false;
 }
