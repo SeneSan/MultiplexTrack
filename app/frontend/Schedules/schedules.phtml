@@ -1,27 +1,50 @@
-<div id="schedule-container" class="week-grid">
-    <?php for ($i = 1; $i <= 7; $i++) : ?>
-    <div id="day-<?php echo $i?>" class="day-grid">
-        <?php for ($j = 9; $j <= 17; $j++) : ?>
-            <?php for ($x = 1; $x <= 2; $x++) : ?>
-            <div id="day-<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>" class="time-slot-hour-grid">
-                <div class="blue-time"><?php echo $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?></div>
-                <?php if (($j == 9) && ($x == 1)) : ?>
-                <div id="add-movie-schedule-container-day-<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>">
-                    <div class="add-movie-grid">
-                        <input type="text"
-                               onkeyup="
-                                   showDropdown('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
-                                   getMovieByTitle('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
-                                   "
-                               />
-                        <button onclick="scheduleMovie('<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>')">+</button>
+<?php
+
+function getDay($day)
+{
+    $days = [1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday'];
+    return date('l (d-m-Y)', strtotime("{$days[$day]} next week"));
+}
+
+?>
+<div class="schedule-page">
+    <div>
+        <button class="open-button align-center" id="screen_1" onclick="showSchedule('1')" style="background-color: cornflowerblue">Screen 1</button>
+        <button class="open-button align-center" id="screen_2" onclick="showSchedule('2')">Screen 2</button>
+        <button class="open-button align-center" id="screen_3" onclick="showSchedule('3')">Screen 3</button>
+        <button class="open-button align-center" id="screen_4" onclick="showSchedule('4')">Screen 4</button>
+    </div>
+    <?php for ($y = 1; $y <= 4; $y++) : ?>
+    <div id="schedule-screen-<?php echo $y?>" class="schedule-main" style="display: <?php if ($y == 1) : echo 'block'; else : echo 'none'; endif; ?>">
+        <div id="schedule-container" class="week-grid">
+            <?php for ($i = 1; $i <= 7; $i++) : ?>
+            <div id="<?php echo 'screen-' . $y . '-day-' . $i ?>" class="day-grid">
+                <div class="day-title"><?php echo getDay($i) ?></div>
+                <?php for ($j = 9; $j <= 17; $j++) : ?>
+                    <?php for ($x = 1; $x <= 2; $x++) : ?>
+                    <div id="<?php echo 'screen-' . $y . '-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>" class="time-slot-hour-grid">
+                        <div class="blue-time"><?php echo $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?></div>
+                        <?php if (($j == 9) && ($x == 1)) : ?>
+                        <div id="<?php echo 'screen-' . $y . '-add-movie-schedule-container-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>">
+                            <div class="add-movie-grid">
+                                <input type="text"
+                                       onkeyup="
+                                           showDropdown('<?php echo 'screen-' . $y . '-add-movie-dropdown-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
+                                           getMovieByTitle('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>', '<?php echo $y; ?>');
+                                           "
+                                       />
+                                <button onclick="scheduleMovie('<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>', '<?php echo $y; ?>')">+</button>
+                            </div>
+                            <div class="add-movie-dropdown" id="<?php echo 'screen-' . $y . '-add-movie-dropdown-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>"></div>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <div class="add-movie-dropdown" id="add-movie-dropdown-<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>"></div>
-                </div>
-                <?php endif; ?>
+                    <?php endfor; ?>
+                <?php endfor; ?>
             </div>
             <?php endfor; ?>
-        <?php endfor; ?>
+        </div>
     </div>
     <?php endfor; ?>
+    <button>Publish</button>
 </div>
