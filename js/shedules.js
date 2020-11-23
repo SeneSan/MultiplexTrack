@@ -9,7 +9,8 @@ function getEmptySchedule() {
             return;
         }
         document.getElementById('main-content').innerHTML = xhr.response;
-    }
+    };
+    window.sessionStorage.clear();
 }
 
 // add movie drop-down for scheduler
@@ -101,13 +102,14 @@ function createOverlay(input, nextTimeSlot, timeSlot, addToTimeSlot, form, scree
     removeButton.style.paddingRight = '8.5px';
     removeButton.style.textAlign = 'right';
     removeButton.className = 'remove-overlay-button';
-    removeButton.onclick = function () {
+    removeButton.onmousedown = function () {
         overlay.remove();
         if (checkNextTimeSlot(nextTimeSlot, screen)) {
-            cloneTimeSlotForm(nextTimeSlot, timeSlot, screen);
+            cloneTimeSlotForm(nextTimeSlot, timeSlot, screen, true);
         } else {
             input.value = '';
             form.style.display = 'block';
+            deleteLastTimeSlot(form);
         }
         displayPreviousRemoveButton(timeSlot.substr(0, 1), screen);
     };
@@ -126,12 +128,13 @@ function createOverlay(input, nextTimeSlot, timeSlot, addToTimeSlot, form, scree
 
     addToTimeSlot.appendChild(overlay);
 
-    cloneTimeSlotForm(timeSlot, nextTimeSlot, screen);
+    setTimeSlot(input);
 
+    cloneTimeSlotForm(timeSlot, nextTimeSlot, screen);
     onlyShowLastRemoveButton(timeSlot.substr(0, 1), screen);
 }
 
-function cloneTimeSlotForm(currentTimeSlot, nextTimeSlot, screen) {
+function cloneTimeSlotForm(currentTimeSlot, nextTimeSlot, screen, remove = false) {
 
     let form = document.querySelector('[id=\"screen-' + screen + '-add-movie-schedule-container-day-' + currentTimeSlot + '\"]');
 
@@ -145,6 +148,10 @@ function cloneTimeSlotForm(currentTimeSlot, nextTimeSlot, screen) {
         nextTimeSlotParent.appendChild(newForm);
     } else {
         form.style.display = 'none';
+    }
+
+    if (remove) {
+        deleteTimeSlot('screen-' + screen + '-day-' + nextTimeSlot);
     }
 }
 
@@ -197,7 +204,9 @@ function onlyShowLastRemoveButton(day, screen) {
 function displayPreviousRemoveButton(day, screen) {
     if (document.querySelectorAll('[id="screen-' + screen + '-day-' + day + '"] .overlay-scheduled-movie')) {
         let buttons = document.querySelectorAll('[id="screen-' + screen + '-day-' + day + '"] .overlay-scheduled-movie');
-        buttons[buttons.length - 1].children[1].style.display = 'block';
+        if (buttons[buttons.length - 1]) {
+            buttons[buttons.length - 1].children[1].style.display = 'block';
+        }
     }
 }
 
@@ -218,4 +227,81 @@ function showSchedule(screenID) {
     });
     document.querySelector('#schedule-screen-'+ screenID).style.display = 'block';
     document.querySelector('#screen_'+ screenID).style.backgroundColor = 'cornflowerblue';
+}
+
+function setTimeSlot(input) {
+    let schedules = window.sessionStorage.getItem('schedules') ? window.sessionStorage.getItem('schedules') : {};
+    if (window.sessionStorage.getItem('schedules')) {
+        window.sessionStorage.clear();
+    }
+
+    let parsed = typeof schedules === 'string' ? JSON.parse(schedules) : {};
+
+    let details = input.parentNode.parentNode.parentNode.id;
+    let screen = details.substr(7, 1);
+    let day = details.substr(13, 1);
+    let hour = details.substr(20);
+
+    let timeSlot = {};
+    timeSlot['screen'] = screen;
+    timeSlot['day'] = day;
+    timeSlot['hour'] = hour;
+    timeSlot['movie_id'] = input.getAttribute('movie-id');
+
+    parsed[details] = timeSlot;
+    let json = JSON.stringify(parsed);
+
+    window.sessionStorage.setItem('schedules', json);
+}
+
+function deleteTimeSlot(details) {
+    let schedules = window.sessionStorage.getItem('schedules');
+    if (window.sessionStorage.getItem('schedules')) {
+        window.sessionStorage.clear();
+    }
+
+    let parsed = JSON.parse(schedules);
+
+    delete parsed[details];
+
+    let json = JSON.stringify(parsed);
+
+    window.sessionStorage.setItem('schedules', json);
+}
+
+function deleteLastTimeSlot(form) {
+    let schedules = window.sessionStorage.getItem('schedules');
+    if (window.sessionStorage.getItem('schedules')) {
+        window.sessionStorage.clear();
+    }
+
+    let parsed = JSON.parse(schedules);
+
+    let details = form.parentNode.id;
+    delete parsed[details];
+
+    let json = JSON.stringify(parsed);
+
+    window.sessionStorage.setItem('schedules', json);
+}
+
+function publishSchedules() {
+    if (confirm('Are you sure you want to publish this schedules?')) {
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '/schedule/publish');
+
+        let form = new FormData();
+        form.append('schedules', window.sessionStorage.getItem('schedules'));
+
+        xhr.send(form);
+
+        xhr.onload = function () {
+            if (xhr.status !== 200) {
+                alert( 'Error: ' + xhr.status);
+                return;
+            }
+            alert(xhr.response);
+        };
+
+    }
 }

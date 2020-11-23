@@ -14,4 +14,17 @@ class ScheduleController
           'html' => $view
         ];
     }
+
+    public function publish() {
+
+        if ($_POST['schedules']) {
+            $schedules = $_POST['schedules'];
+            var_dump(json_decode($schedules));
+
+            header('Content-type: application/json');
+
+            echo json_encode($schedules);
+        }
+
+    }
 }
