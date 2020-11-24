@@ -301,6 +301,7 @@ function publishSchedules() {
                 return;
             }
             alert(xhr.response);
+            window.location = '/';
         };
 
     }

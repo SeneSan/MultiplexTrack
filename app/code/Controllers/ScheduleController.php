@@ -4,6 +4,8 @@
 namespace Controllers;
 
 
+use Models\TimeSlot;
+
 class ScheduleController
 {
     public function getView() {
@@ -19,11 +21,12 @@ class ScheduleController
 
         if ($_POST['schedules']) {
             $schedules = $_POST['schedules'];
-            var_dump(json_decode($schedules));
+//            var_dump(json_decode($schedules, true));
+            $result = TimeSlot::publishSchedules(json_decode($schedules, true));
 
             header('Content-type: application/json');
 
-            echo json_encode($schedules);
+            echo json_encode($result);
         }
 
     }
