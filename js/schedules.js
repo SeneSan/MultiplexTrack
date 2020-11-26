@@ -9,8 +9,11 @@ function getEmptySchedule() {
             return;
         }
         document.getElementById('main-content').innerHTML = xhr.response;
+        let js = document.createElement('script');
+        js.src = 'js/newSchedules.js';
+        document.body.appendChild(js);
     };
-    window.sessionStorage.clear();
+    // window.sessionStorage.clear();
 }
 
 // add movie drop-down for scheduler
