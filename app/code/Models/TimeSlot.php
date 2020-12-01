@@ -63,47 +63,119 @@ class TimeSlot
         return date('Y-m-d H:i:s', strtotime("{$days[$day]} next week {$time}"));
     }
 
-    public static function publishSchedules($schedules) {
+    public static function deconstructDateTime($dateTime) {
+        $day = date('N', strtotime($dateTime));
+        $hour = ltrim(date('H:i', strtotime($dateTime)), '0');
+        return 'day-' . $day . '-hour-' . $hour;
+    }
+
+    public static function publishMovie($movieId, $timeSlot) {
+        $screenId = substr($timeSlot, 7, 1);
+        $day = substr($timeSlot, 13, 1);
+        $time = substr($timeSlot, 20);
+        $dateTime = self::constructDateTime($day, $time);
+
         $pdo = Database::getConnection();
-
-        $query = "INSERT INTO time_slots (screen_id, movie_id, start_date_time) VALUES ";
-
-        $data = [];
-        foreach ($schedules as $schedule) {
-            $dateTime = self::constructDateTime($schedule['day'], $schedule['hour']);
-            $data[] = array('screen_id' => $schedule['screen'], 'movie_id' => $schedule['movie_id'], 'start_date_time' => $dateTime);
-        }
-
-        $insert_values = array();
-        foreach($data as $d){
-            $question_marks[] = '('  . self::placeholders('?', sizeof($d)) . ')';
-            $insert_values = array_merge($insert_values, array_values($d));
-        }
-
-        $sql = $query . implode(',', $question_marks);
-        $stmt = $pdo->prepare ($sql);
+        $sql = 'INSERT INTO time_slots (screen_id, movie_id, start_date_time) VALUE (?, ? ,?)';
 
         try {
-            $stmt->execute($insert_values);
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$screenId, $movieId, $dateTime]);
 
-            return [
-                'error' => false,
-                'message' => 'Movies were scheduled successfully!'
-            ];
+            if ($stmt) {
+
+                return [
+                    'error' => false,
+                    'message' => 'Schedules was published successfully!',
+                    'start_date_time' => TimeSlot::getTimeSlot($dateTime)
+                ];
+            }
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getTimeSlots() {
+        $pdo = Database::getConnection();
+
+        $sql = "select m.id, m.title, m.duration, t.screen_id, t.start_date_time from movies as m inner join time_slots as t on m.id = t.movie_id where t.start_date_time between ? and ?;";
+        $start = TimeSlot::constructDateTime('1', '9:00');
+        $end = TimeSlot::constructDateTime('7', '18:00');
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$start, $end]);
+
+            $results = $stmt->fetchAll();
+
+            if (count($results) !== 0) {
+                $response = [];
+                foreach ($results as $result) {
+                    $response[] = [
+                        'movie_id' => $result['id'],
+                        'movie_title' => $result['title'],
+                        'movie_duration' => $result['duration'],
+                        'start_date_time' => $result['start_date_time'],
+                        'time_slot' => 'screen-' . $result['screen_id'] . '-' . TimeSlot::deconstructDateTime($result['start_date_time'])
+                    ];
+                }
+
+                return [
+                    'error' => false,
+                    'timeSlots' => $response
+                ];
+
+            } else {
+                return [
+                  'error' => false,
+                  'message' => 'No time slots are available.'
+                ];
+            }
 
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
 
-    private static function placeholders($text, $count=0, $separator=","){
-        $result = array();
-        if($count > 0){
-            for($x=0; $x<$count; $x++){
-                $result[] = $text;
-            }
-        }
+    public static function getTimeSlot($startDateTime) {
+        $pdo = Database::getConnection();
 
-        return implode($separator, $result);
+        $sql = "SELECT * FROM time_slots WHERE start_date_time = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$startDateTime]);
+            $result = $stmt->fetch();
+
+            if ($result) {
+                return [
+                    'error' => false,
+                    'start_date_time' => $result['start_date_time']
+                ];
+            }
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function removeTimeSlot($startDateTime) {
+        $pdo = Database::getConnection();
+
+        $sql = "DELETE FROM time_slots WHERE start_date_time = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$startDateTime]);
+
+            if ($stmt) {
+                return [
+                    'error' => false,
+                    'message' => 'Time slot has removed successfully!'
+                ];
+            }
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
     }
 }

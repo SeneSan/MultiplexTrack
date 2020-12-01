@@ -257,7 +257,7 @@ class Movie
         }
     }
 
-    public static function getMovieByTitle($title) {
+    public static function getMovieByTitle($title, $timeSlot) {
         $pdo = Database::getConnection();
         $sql = "SELECT * FROM movies WHERE title LIKE ?";
 
@@ -266,18 +266,60 @@ class Movie
             $query->execute(['%' . $title . '%']);
 
             $movies = [];
+            $invalidMovies = [];
 
             while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
-                $movie = [];
 
-                $movie['id'] = $result['id'];
-                $movie['title'] = $result['title'];
-                $movie['duration'] = $result['duration'];
-
-                $movies[] = $movie;
+                if (Movie::getValidDuration($timeSlot, $result['duration'])) {
+                    $movie = [];
+                    $movie['id'] = $result['id'];
+                    $movie['title'] = $result['title'];
+                    $movie['duration'] = $result['duration'];
+                    $movies[] = $movie;
+                } else {
+                    $movie = [];
+                    $movie['id'] = $result['id'];
+                    $movie['title'] = $result['title'];
+                    $movie['duration'] = $result['duration'];
+                    $invalidMovies[] = $movie;
+                }
             }
 
-            return $movies;
+            return [
+                'error' => false,
+                'movies' => $movies,
+                'invalid-movies' => $invalidMovies
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getValidDuration($timeSlot, $movieDuration) {
+        $pdo = Database::getConnection();
+
+        $screenId = substr($timeSlot, 7, 1);
+        $day = substr($timeSlot, 13, 1);
+        $time = str_replace('-', ':', substr($timeSlot, 20));
+        $dateTime = TimeSlot::constructDateTime($day, $time);
+
+        $date = date('Y-m-d', strtotime($dateTime));
+
+        $sql = "SELECT start_date_time FROM time_slots WHERE screen_id = ? and start_date_time like ?  and start_date_time > ? order by start_date_time LIMIT 1";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$screenId, $date . '%', $dateTime]);
+            $result = $stmt->fetch();
+
+            if ($result) {
+                if (strtotime($dateTime) + $movieDuration * 60 >= strtotime($result['start_date_time'])) {
+                    return false;
+                }
+                return true;
+            }
+            return true;
 
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), (int)$e->getCode());

@@ -19,15 +19,27 @@ class ScheduleController
 
     public function publish() {
 
-        if ($_POST['schedules']) {
-            $schedules = $_POST['schedules'];
-//            var_dump(json_decode($schedules, true));
-            $result = TimeSlot::publishSchedules(json_decode($schedules, true));
+        if (isset($_POST['movie_id']) && isset($_POST['time_slot'])) {
 
-            header('Content-type: application/json');
+            $movieId = $_POST['movie_id'];
+            $timeSlot = $_POST['time_slot'];
 
-            echo json_encode($result);
+            $response = TimeSlot::publishMovie($movieId, $timeSlot);
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode($response);
         }
+    }
 
+    public function getCurrentTimeSlots() {
+        header('Content-type:application/json;charset=utf-8');
+        echo json_encode(TimeSlot::getTimeSlots());
+    }
+
+    public function removeTimeSlot() {
+        if (isset($_POST['remove_date_time'])) {
+            $startDateTime = $_POST['remove_date_time'];
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode(TimeSlot::removeTimeSlot($startDateTime));
+        }
     }
 }

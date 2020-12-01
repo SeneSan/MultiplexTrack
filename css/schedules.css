@@ -39,7 +39,7 @@
 
 /* Add movie drop-down for scheduler */
 .add-movie-dropdown {
-    z-index: 1;
+    z-index: 3;
     position: relative;
     display: none;
     width: auto;
@@ -103,4 +103,9 @@
     display: grid;
     grid-template-rows: 60px auto 40px;
     grid-row-gap: 10px;
+}
+
+.invalid-movie {
+    background-color: indianred;
+    opacity: 0.5;
 }
