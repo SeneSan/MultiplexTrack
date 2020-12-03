@@ -1,6 +1,6 @@
 <?php
 
-define('__ROOT__', '/Users/macbook/PhpstormProjects/MultiplexTrack/');
+define('__ROOT__', dirname(__FILE__) . '/');
 
 require __DIR__ . '/vendor/autoload.php';
 
