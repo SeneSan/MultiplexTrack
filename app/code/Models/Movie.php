@@ -325,4 +325,56 @@ class Movie
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
+
+    public static function getTodayMovies() {
+        $pdo = Database::getConnection();
+
+        $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where start_date_time like concat(curdate(), '%');";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                return [
+                    'error' => false,
+                    'movies' => $results
+                ];
+            }
+
+            return [
+                'error' => false,
+                'message' => 'No movies are scheduled for today!'
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getMovieDetails($movieId) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT * FROM movies WHERE id = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$movieId]);
+
+            $movie = $stmt->fetch();
+
+            if ($movie) {
+                return $movie;
+            }
+            return [
+                'error' => false,
+                'message' => 'Movie does not exists!'
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
 }

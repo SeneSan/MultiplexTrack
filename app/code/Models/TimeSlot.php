@@ -178,4 +178,45 @@ class TimeSlot
             throw new \PDOException($e->getMessage(), (int)$e->getCode());
         }
     }
+
+    public static function watchTodayMovie($movieId) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT t.screen_id, t.start_date_time FROM time_slots as t INNER JOIN movies as m ON m.id = t.movie_id WHERE ";
+        $sql .= "t.movie_id = ? AND t.start_date_time LIKE concat(curdate(), '%')";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$movieId]);
+
+            $response = [];
+            while ($result = $stmt->fetch()) {
+
+                if (!isset($response['date'])){
+                    $response['date'] = date('d-m-Y', strtotime($result['start_date_time']));
+                }
+
+                switch ($result['screen_id']){
+                    case 1:
+                        $response['screens']['screen_1'][] = date('H:i', strtotime($result['start_date_time']));
+                        break;
+                    case 2:
+                        $response['screens']['screen_2'][] = date('H:i', strtotime($result['start_date_time']));
+                        break;
+                    case 3:
+                        $response['screens']['screen_3'][] = date('H:i', strtotime($result['start_date_time']));
+                        break;
+                    case 4:
+                        $response['screens']['screen_4'][] = date('H:i', strtotime($result['start_date_time']));
+                        break;
+                    default:
+                        break;
+                }
+            }
+            return $response;
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
+        }
+    }
 }

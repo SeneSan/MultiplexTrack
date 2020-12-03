@@ -1,0 +1,54 @@
+<?php
+/**
+ * @var $movieDetails
+ * @var $movieTimeSlots
+ */
+?>
+
+<div class="watch-today-modal">
+    <div class="watch-today-modal-content">
+        <div class="field-horizontal-grid">
+            <span></span>
+            <h3 class="grid-justify-center"><?php echo $movieDetails['title']; ?></h3>
+            <span class="close" onclick="closeWatchTodayModal()">&times;</span>
+        </div>
+        <div>
+            <div class="field-description">Short Description</div>
+            <p><?php echo $movieDetails['description']; ?></p>
+        </div>
+        <div class="details-grid">
+            <div>
+                <div class="field-description">Categories</div>
+                <p><?php echo $movieDetails['categories']; ?></p>
+            </div>
+            <div>
+                <div class="field-description">Duration</div>
+                <p><?php echo $movieDetails['duration']; ?> min</p>
+            </div>
+            <div>
+                <div class="field-description">Type</div>
+                <p><?php echo $movieDetails['type']; ?></p>
+            </div>
+            <div>
+                <div class="field-description">Release year</div>
+                <p><?php echo $movieDetails['year']; ?></p>
+            </div>
+        </div>
+        <hr>
+        <div class="field-horizontal-grid">
+            <span></span>
+            <h4 class="grid-justify-center">Available today</h4>
+            <span></span>
+        </div>
+        <div class="available-screens-grid">
+            <?php foreach ($movieTimeSlots['screens'] as $screen => $hours): ?>
+                <div>
+                    <div><?php echo $screen ?></div>
+                    <?php foreach ($hours as $hour): ?>
+                        <div><?php echo $hour ?></div>
+                    <?php endforeach; ?>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
+</div>

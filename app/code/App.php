@@ -11,8 +11,6 @@ class App
     private static $footer;
     private static $html = '';
 
-    private static $userType;
-
     public static function run(){
 
         self::addHead();
