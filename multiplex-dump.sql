@@ -46,6 +46,37 @@ INSERT INTO `movies` VALUES (24,'Avengers Assemble',2012,'3D',143,' Action, Adve
 UNLOCK TABLES;
 
 --
+-- Table structure for table `tickets`
+--
+
+DROP TABLE IF EXISTS `tickets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `tickets` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `time_slot_id` int NOT NULL,
+  `nr_seats` int NOT NULL,
+  `total_price` float(2,0) NOT NULL,
+  `user_id` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `tickets_time_slots_id_fk` (`time_slot_id`),
+  KEY `tickets_users_id_fk` (`user_id`),
+  CONSTRAINT `tickets_time_slots_id_fk` FOREIGN KEY (`time_slot_id`) REFERENCES `time_slots` (`id`),
+  CONSTRAINT `tickets_users_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `tickets`
+--
+
+LOCK TABLES `tickets` WRITE;
+/*!40000 ALTER TABLE `tickets` DISABLE KEYS */;
+INSERT INTO `tickets` VALUES (2,87,1,6,7),(3,91,1,6,7),(4,92,4,24,7),(5,92,4,24,7);
+/*!40000 ALTER TABLE `tickets` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `time_slots`
 --
 
@@ -60,7 +91,7 @@ CREATE TABLE `time_slots` (
   PRIMARY KEY (`id`),
   KEY `time_slots_movies_id_fk` (`movie_id`),
   CONSTRAINT `time_slots_movies_id_fk` FOREIGN KEY (`movie_id`) REFERENCES `movies` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=99 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=100 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -69,7 +100,7 @@ CREATE TABLE `time_slots` (
 
 LOCK TABLES `time_slots` WRITE;
 /*!40000 ALTER TABLE `time_slots` DISABLE KEYS */;
-INSERT INTO `time_slots` VALUES (72,1,25,'2020-12-03 09:00:00'),(73,1,33,'2020-12-02 12:00:00'),(74,1,30,'2020-12-03 14:30:00'),(75,1,32,'2020-12-03 17:00:00'),(76,2,27,'2020-12-03 09:00:00'),(77,2,29,'2020-12-01 12:00:00'),(78,2,26,'2020-12-02 15:30:00'),(79,3,24,'2020-12-01 09:00:00'),(80,3,31,'2020-12-01 12:00:00'),(81,3,28,'2020-12-01 15:30:00'),(82,1,33,'2020-12-02 09:00:00'),(83,1,33,'2020-12-01 11:30:00'),(84,1,33,'2020-12-01 14:00:00'),(85,1,33,'2020-12-01 16:30:00'),(86,1,33,'2020-12-03 09:00:00'),(87,1,33,'2020-12-03 12:00:00'),(88,1,33,'2020-12-03 14:00:00'),(89,1,33,'2020-12-03 16:30:00'),(90,2,33,'2020-12-03 10:00:00'),(91,2,33,'2020-12-03 12:30:00'),(92,2,33,'2020-12-03 15:30:00'),(93,3,33,'2020-12-03 09:30:00'),(94,3,33,'2020-12-03 12:00:00'),(95,3,33,'2020-12-03 14:30:00'),(96,4,33,'2020-12-03 09:00:00'),(97,4,33,'2020-12-03 12:00:00'),(98,4,33,'2020-12-03 16:00:00');
+INSERT INTO `time_slots` VALUES (72,1,25,'2020-12-03 09:00:00'),(73,1,33,'2020-12-02 12:00:00'),(74,1,30,'2020-12-03 14:30:00'),(75,1,32,'2020-12-03 17:00:00'),(76,2,27,'2020-12-03 09:00:00'),(77,2,29,'2020-12-01 12:00:00'),(78,2,26,'2020-12-02 15:30:00'),(79,3,24,'2020-12-01 09:00:00'),(80,3,31,'2020-12-01 12:00:00'),(81,3,28,'2020-12-01 15:30:00'),(82,1,33,'2020-12-02 09:00:00'),(83,1,33,'2020-12-01 11:30:00'),(84,1,33,'2020-12-01 14:00:00'),(85,1,33,'2020-12-01 16:30:00'),(86,1,33,'2020-12-08 09:00:00'),(87,1,33,'2020-12-08 12:00:00'),(88,1,33,'2020-12-08 14:00:00'),(89,1,33,'2020-12-08 16:30:00'),(90,2,33,'2020-12-08 10:00:00'),(91,2,33,'2020-12-08 12:30:00'),(92,2,33,'2020-12-08 15:30:00'),(93,3,33,'2020-12-08 09:30:00'),(94,3,33,'2020-12-08 12:00:00'),(95,3,33,'2020-12-08 14:30:00'),(96,4,33,'2020-12-08 09:00:00'),(97,4,33,'2020-12-08 12:00:00'),(98,4,33,'2020-12-08 16:00:00'),(99,1,33,'2020-12-15 10:00:00');
 /*!40000 ALTER TABLE `time_slots` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -110,4 +141,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-12-03 21:03:08
+-- Dump completed on 2020-12-08 22:57:47

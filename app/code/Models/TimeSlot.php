@@ -193,7 +193,7 @@ class TimeSlot
             while ($result = $stmt->fetch()) {
 
                 if (!isset($response['date'])){
-                    $response['date'] = date('d-m-Y', strtotime($result['start_date_time']));
+                    $response['date'] = date('Y-m-d', strtotime($result['start_date_time']));
                 }
 
                 switch ($result['screen_id']){
@@ -214,6 +214,27 @@ class TimeSlot
                 }
             }
             return $response;
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
+        }
+    }
+
+    public static function getTimeSlotByDateTime($startDateTime) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT * FROM time_slots WHERE start_date_time = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$startDateTime]);
+
+            $result = $stmt->fetch();
+
+            if ($result) {
+                return $result;
+            }
+            return 'No time slot was found';
 
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), $e->getCode());

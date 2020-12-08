@@ -5,5 +5,8 @@
       "Controllers\\": "app/code/Controllers/",
       "Models\\": "app/code/Models/"
     }
+  },
+  "require": {
+    "dompdf/dompdf": "^0.8.6"
   }
 }

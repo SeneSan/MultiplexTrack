@@ -58,4 +58,47 @@ hr {
     display: grid;
     grid-template-columns: auto auto auto auto;
     text-align: center;
+    border-radius: 5px;
+    border: #aaaaaa solid 1px;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+.available-hours-grid {
+    display: grid;
+    grid-template-rows: 25px 25px 25px 25px;
+    grid-row-gap: 10px;
+    justify-items: center;
+    align-items: center;
+}
+
+.watch-today-screen {
+    height: 30px;
+    width: 60px;
+    background-color: lightblue;
+    text-align: center;
+    justify-content: center;
+    line-height: 30px;
+    border-radius: 5px;
+    border: #555555 solid 1px;
+}
+
+.watch-today-hours {
+    background-color: lightcyan;
+    cursor: pointer;
+}
+
+.watch-today-hours[selected] {
+    background-color: greenyellow;
+}
+
+.seats-total-grid {
+    display: grid;
+    grid-template-columns: auto auto;
+}
+
+.price-grid {
+    display: grid;
+    grid-template-columns: 15px auto;
+    font-size: large;
 }

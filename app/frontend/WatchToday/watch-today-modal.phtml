@@ -2,6 +2,7 @@
 /**
  * @var $movieDetails
  * @var $movieTimeSlots
+ * @var $price
  */
 ?>
 
@@ -9,7 +10,10 @@
     <div class="watch-today-modal-content">
         <div class="field-horizontal-grid">
             <span></span>
-            <h3 class="grid-justify-center"><?php echo $movieDetails['title']; ?></h3>
+            <h3 id="movie-title" class="grid-justify-center"
+                movie-id="<?php echo $movieDetails['id']; ?>"
+                date="<?php echo $movieTimeSlots['date']; ?>"
+            ><?php echo $movieDetails['title']; ?></h3>
             <span class="close" onclick="closeWatchTodayModal()">&times;</span>
         </div>
         <div>
@@ -42,13 +46,27 @@
         </div>
         <div class="available-screens-grid">
             <?php foreach ($movieTimeSlots['screens'] as $screen => $hours): ?>
-                <div>
-                    <div><?php echo $screen ?></div>
+                <div class="available-hours-grid">
+                    <div class="watch-today-screen"><?php echo ucfirst(str_replace('_', ' ', $screen)); ?></div>
                     <?php foreach ($hours as $hour): ?>
-                        <div><?php echo $hour ?></div>
+                        <div class="watch-today-screen watch-today-hours" hour="<?php echo $hour ?>" onclick="selectHour(this)"><?php echo $hour ?></div>
                     <?php endforeach; ?>
                 </div>
             <?php endforeach; ?>
         </div>
+        <div class="seats-total-grid">
+            <div>
+                <div><b>Number of seats:</b></div>
+                <input id="movie-seats" type="number" value="1" oninput="changePrice(this)"/>
+            </div>
+            <div>
+                <div><b>Total amount:</b></div>
+                <div class="price-grid">
+                    <div>$ </div>
+                    <div id="total-price" initial-price="<?php echo $price; ?>"><?php echo $price; ?></div>
+                </div>
+            </div>
+        </div>
+        <button onclick="confirmPurchase()">Confirm purchase</button>
     </div>
 </div>
