@@ -4,91 +4,110 @@
 namespace Models;
 
 
+use Dompdf\Dompdf;
+
 class Ticket
 {
-    private $movieName;
-    private $screeNumber;
-    private $seatNumber;
-    private $startHour;
-    private $price;
+    public static function getMoviePrice($movieType, $startDateTime) {
+        $price = 0.00;
 
-    /**
-     * @return mixed
-     */
-    public function getMovieName()
-    {
-        return $this->movieName;
+        switch ($movieType) {
+            case '2D':
+                $price = 3.00;
+                break;
+            case '3D':
+                $price = 6.00;
+                break;
+            default:
+                break;
+        }
+
+        $currentDay = date('l', strtotime($startDateTime));
+
+        if ($currentDay === 'Friday') {
+            return number_format($price / 2, 2);
+        }
+        return number_format($price, 2);
     }
 
-    /**
-     * @param mixed $movieName
-     */
-    public function setMovieName($movieName)
-    {
-        $this->movieName = $movieName;
+    public static function isFridayDiscount($startDateTime) {
+        $currentDay = date('l', strtotime($startDateTime));
+
+        if ($currentDay === 'Friday') {
+            return 'Yes';
+        }
+        return 'No';
     }
 
-    /**
-     * @return mixed
-     */
-    public function getScreeNumber()
-    {
-        return $this->screeNumber;
+    public static function sellTickets($timeSlotId, $nrSeats, $totalPrice, $userId) {
+        $pdo = Database::getConnection();
+
+        $sql = "INSERT INTO tickets (time_slot_id, nr_seats, total_price, user_id) VALUE (? , ? , ?, ?)";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$timeSlotId, $nrSeats, $totalPrice, $userId]);
+
+            if ($stmt) {
+                $lastTicketId = $pdo->lastInsertId();
+
+                return [
+                    'error' => false,
+                    'new-ticket' => self::getTicketById($lastTicketId)['ticket']
+                ];
+            }
+
+            return [
+                'error' => true,
+                'message' => 'Oops! Purchase was not processed.'
+            ];
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
+        }
     }
 
-    /**
-     * @param mixed $screeNumber
-     */
-    public function setScreeNumber($screeNumber)
-    {
-        $this->screeNumber = $screeNumber;
+    public static function getTicketById($ticketId) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT * FROM tickets WHERE id = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$ticketId]);
+
+            $result = $stmt->fetch();
+
+            if ($result) {
+                return [
+                    'error' => false,
+                    'ticket' => $result
+                ];
+            }
+            return [
+                'error' => true,
+                'message' => "No ticket with id {$ticketId} was found."
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), $e->getCode());
+        }
     }
 
-    /**
-     * @return mixed
-     */
-    public function getSeatNumber()
-    {
-        return $this->seatNumber;
-    }
+    public static function generatePDF($ticketId, $screenID, $startDateTime, $movie, $nrSeats, $totalPrice) {
+        $dompdf = new Dompdf();
 
-    /**
-     * @param mixed $seatNumber
-     */
-    public function setSeatNumber($seatNumber)
-    {
-        $this->seatNumber = $seatNumber;
-    }
+        $startsAt = date('H:i l d-m-Y', strtotime($startDateTime));
+        $movieTitle = $movie['title'];
+        $movieType = $movie['type'];
+        $fridayDiscount = self::isFridayDiscount($startDateTime);
 
-    /**
-     * @return mixed
-     */
-    public function getStartHour()
-    {
-        return $this->startHour;
-    }
+        $invoiceTemplate = file_get_contents(__ROOT__ . 'app/frontend/Invoices/invoice-template.phtml');
+        $invoice = sprintf($invoiceTemplate, $ticketId, $screenID, $startsAt, $movieTitle, $movieType, $nrSeats, $fridayDiscount, $totalPrice);
 
-    /**
-     * @param mixed $startHour
-     */
-    public function setStartHour($startHour)
-    {
-        $this->startHour = $startHour;
-    }
+        $dompdf->loadHtml($invoice);
+        $dompdf->setPaper('A4', 'landscape');
+        $dompdf->render();
 
-    /**
-     * @return mixed
-     */
-    public function getPrice()
-    {
-        return $this->price;
-    }
-
-    /**
-     * @param mixed $price
-     */
-    public function setPrice($price)
-    {
-        $this->price = $price;
+        file_put_contents(__ROOT__ . "invoices/invoice_{$ticketId}.pdf", $dompdf->output());
     }
 }

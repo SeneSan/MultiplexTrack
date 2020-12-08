@@ -1,0 +1,11 @@
+<div id="watch-today-modal"></div>
+<div class="watch-today-grid">
+    <?php if (isset(\Models\Movie::getTodayMovies()['movies'])): ?>
+        <?php foreach (\Models\Movie::getTodayMovies()['movies'] as $movie): ?>
+        <div>
+            <img class="movie-image" src="images/<?php echo $movie['poster']; ?>" alt="dummy_poster" onclick="showWatchTodayModal(<?php echo $movie['id']; ?>)">
+            <div class="movie-title"><?php echo $movie['title']; ?></div>
+        </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</div>

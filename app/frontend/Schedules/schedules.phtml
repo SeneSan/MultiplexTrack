@@ -24,20 +24,7 @@ function getDay($day)
                     <?php for ($x = 1; $x <= 2; $x++) : ?>
                     <div id="<?php echo 'screen-' . $y . '-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>" class="time-slot-hour-grid">
                         <div class="blue-time"><?php echo $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?></div>
-                        <?php if (($j == 9) && ($x == 1)) : ?>
-                        <div id="<?php echo 'screen-' . $y . '-add-movie-schedule-container-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>">
-                            <div class="add-movie-grid">
-                                <input type="text"
-                                       onkeyup="
-                                           showDropdown('<?php echo 'screen-' . $y . '-add-movie-dropdown-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>');
-                                           getMovieByTitle('<?php echo 'day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>', '<?php echo $y; ?>');
-                                           "
-                                       />
-                                <button onclick="scheduleMovie('<?php echo $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>', '<?php echo $y; ?>')">+</button>
-                            </div>
-                            <div class="add-movie-dropdown" id="<?php echo 'screen-' . $y . '-add-movie-dropdown-day-' . $i . '-hour-' . $j; if ($x == 1): echo ':00'; else : echo ':30'; endif;?>"></div>
-                        </div>
-                        <?php endif; ?>
+                        <div class="add-movie-form"></div>
                     </div>
                     <?php endfor; ?>
                 <?php endfor; ?>
@@ -46,5 +33,4 @@ function getDay($day)
         </div>
     </div>
     <?php endfor; ?>
-    <button onclick="publishSchedules()">Publish</button>
 </div>

@@ -31,16 +31,13 @@ class MovieController
         echo json_encode($result);
     }
 
-    public function getMovieByTitle($title) {
+    public function getMovieByTitle($title, $timeSlot) {
 
-        $movies = Movie::getMovieByTitle($title);
+        $movies = Movie::getMovieByTitle($title, $timeSlot);
         header('Content-type:application/json;charset=utf-8');
 
         if ($movies) {
-            echo json_encode([
-                'error' => false,
-                'movies' => $movies
-            ]);
+            echo json_encode($movies);
         } else {
             echo json_encode([
                 'error' => false,

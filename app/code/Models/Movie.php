@@ -257,7 +257,7 @@ class Movie
         }
     }
 
-    public static function getMovieByTitle($title) {
+    public static function getMovieByTitle($title, $timeSlot) {
         $pdo = Database::getConnection();
         $sql = "SELECT * FROM movies WHERE title LIKE ?";
 
@@ -266,18 +266,112 @@ class Movie
             $query->execute(['%' . $title . '%']);
 
             $movies = [];
+            $invalidMovies = [];
 
             while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
-                $movie = [];
 
-                $movie['id'] = $result['id'];
-                $movie['title'] = $result['title'];
-                $movie['duration'] = $result['duration'];
-
-                $movies[] = $movie;
+                if (Movie::getValidDuration($timeSlot, $result['duration'])) {
+                    $movie = [];
+                    $movie['id'] = $result['id'];
+                    $movie['title'] = $result['title'];
+                    $movie['duration'] = $result['duration'];
+                    $movies[] = $movie;
+                } else {
+                    $movie = [];
+                    $movie['id'] = $result['id'];
+                    $movie['title'] = $result['title'];
+                    $movie['duration'] = $result['duration'];
+                    $invalidMovies[] = $movie;
+                }
             }
 
-            return $movies;
+            return [
+                'error' => false,
+                'movies' => $movies,
+                'invalid-movies' => $invalidMovies
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getValidDuration($timeSlot, $movieDuration) {
+        $pdo = Database::getConnection();
+
+        $screenId = substr($timeSlot, 7, 1);
+        $day = substr($timeSlot, 13, 1);
+        $time = str_replace('-', ':', substr($timeSlot, 20));
+        $dateTime = TimeSlot::constructDateTime($day, $time);
+
+        $date = date('Y-m-d', strtotime($dateTime));
+
+        $sql = "SELECT start_date_time FROM time_slots WHERE screen_id = ? and start_date_time like ?  and start_date_time > ? order by start_date_time LIMIT 1";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$screenId, $date . '%', $dateTime]);
+            $result = $stmt->fetch();
+
+            if ($result) {
+                if (strtotime($dateTime) + $movieDuration * 60 >= strtotime($result['start_date_time'])) {
+                    return false;
+                }
+                return true;
+            }
+            return true;
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getTodayMovies() {
+        $pdo = Database::getConnection();
+
+        $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where start_date_time like concat(curdate(), '%');";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                return [
+                    'error' => false,
+                    'movies' => $results
+                ];
+            }
+
+            return [
+                'error' => false,
+                'message' => 'No movies are scheduled for today!'
+            ];
+
+        } catch (\PDOException $e) {
+            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+        }
+    }
+
+    public static function getMovieDetails($movieId) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT * FROM movies WHERE id = ?";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$movieId]);
+
+            $movie = $stmt->fetch();
+
+            if ($movie) {
+                return $movie;
+            }
+            return [
+                'error' => false,
+                'message' => 'Movie does not exists!'
+            ];
 
         } catch (\PDOException $e) {
             throw new \PDOException($e->getMessage(), (int)$e->getCode());

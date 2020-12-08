@@ -33,9 +33,6 @@ class FrontController implements FrontControllerInterface
 
         $path = trim(parse_url($_SERVER["REQUEST_URI"], PHP_URL_PATH), "/");
 
-//        $path = preg_replace('/[^a-zA-Z0-9]/', "", $path);
-
-
         if (strpos($path, $this->basePath) === 0) {
             $path = substr($path, strlen($this->basePath));
         }
@@ -45,13 +42,11 @@ class FrontController implements FrontControllerInterface
         } else {
             $this->setController(self::DEFAULT_CONTROLLER);
         }
-
         if (isset($action)) {
             $this->setAction($action);
         } else {
             $this->setAction(self::DEFAULT_ACTION);
         }
-
         if (isset($params)) {
             $this->setParams(explode("/", $params));
         }
