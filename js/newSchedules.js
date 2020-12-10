@@ -50,49 +50,57 @@ function getMovieByTitle(input, dropdown) {
     xhr.send();
 
     xhr.onload = function () {
+        if (xhr.status !== 200) {
+            alert( 'Error: ' + xhr.status);
+            return;
+        }
         dropdown.innerHTML = '';
 
-        let response = JSON.parse(xhr.response);
-        let movies = response['movies'];
-        let invalidMovies = response['invalid-movies'];
+        if (xhr.response['movies'] === OOPS_MESSAGE) {
+            alert(xhr.response);
+        } else {
+            let response = JSON.parse(xhr.response);
+            let movies = response['movies'];
+            let invalidMovies = response['invalid-movies'];
 
-        movies.forEach(function (movie) {
-            let divMovie = document.createElement('div');
-            divMovie.className = 'drop-down-item';
-            divMovie.onmousedown = function () {
-                input.setAttribute('movie-id', movie['id']);
-                input.value = movie['title'];
-                input.setAttribute('movie-duration', movie['duration'])
-            };
-            divMovie.onmouseup = function () {
-                hideDropDownAfterClick(dropdown);
-            };
+            movies.forEach(function (movie) {
+                let divMovie = document.createElement('div');
+                divMovie.className = 'drop-down-item';
+                divMovie.onmousedown = function () {
+                    input.setAttribute('movie-id', movie['id']);
+                    input.value = movie['title'];
+                    input.setAttribute('movie-duration', movie['duration'])
+                };
+                divMovie.onmouseup = function () {
+                    hideDropDownAfterClick(dropdown);
+                };
 
-            let divTitle = document.createElement('div');
-            divTitle.innerText = movie['title'];
+                let divTitle = document.createElement('div');
+                divTitle.innerText = movie['title'];
 
-            let divDuration = document.createElement('div');
-            divDuration.innerText = movie['duration'] + ' min';
+                let divDuration = document.createElement('div');
+                divDuration.innerText = movie['duration'] + ' min';
 
-            divMovie.appendChild(divTitle);
-            divMovie.appendChild(divDuration);
-            dropdown.appendChild(divMovie);
-        });
+                divMovie.appendChild(divTitle);
+                divMovie.appendChild(divDuration);
+                dropdown.appendChild(divMovie);
+            });
 
-        invalidMovies.forEach(function (invalidMovie) {
-            let divInvalidMovie = document.createElement('div');
-            divInvalidMovie.className = 'drop-down-item invalid-movie';
+            invalidMovies.forEach(function (invalidMovie) {
+                let divInvalidMovie = document.createElement('div');
+                divInvalidMovie.className = 'drop-down-item invalid-movie';
 
-            let divInvalidTitle = document.createElement('div');
-            divInvalidTitle.innerText = invalidMovie['title'];
+                let divInvalidTitle = document.createElement('div');
+                divInvalidTitle.innerText = invalidMovie['title'];
 
-            let divInvalidDuration = document.createElement('div');
-            divInvalidDuration.innerText = invalidMovie['duration'] + ' min';
+                let divInvalidDuration = document.createElement('div');
+                divInvalidDuration.innerText = invalidMovie['duration'] + ' min';
 
-            divInvalidMovie.appendChild(divInvalidTitle);
-            divInvalidMovie.appendChild(divInvalidDuration);
-            dropdown.appendChild(divInvalidMovie);
-        });
+                divInvalidMovie.appendChild(divInvalidTitle);
+                divInvalidMovie.appendChild(divInvalidDuration);
+                dropdown.appendChild(divInvalidMovie);
+            });
+        }
     }
 }
 
@@ -115,10 +123,16 @@ function scheduleMovie(input) {
 
         xhr.onload = function () {
             if (xhr.status === 200 && xhr.response.error !== true) {
-                let response = JSON.parse(xhr.response);
+                if (xhr.response === OOPS_MESSAGE) {
+                    alert(xhr.response);
+                } else {
+                    let response = JSON.parse(xhr.response);
 
-                createOverlay(timeSlot, response['start_date_time']['start_date_time']);
-                timeSlot.children[1].remove();
+                    createOverlay(timeSlot, response['start_date_time']['start_date_time']);
+                    timeSlot.children[1].remove();
+                }
+            } else {
+                alert( 'Error: ' + xhr.status);
             }
         }
     }
@@ -171,7 +185,13 @@ function removeTimeSlot(overlay) {
 
     xhr.onload = function () {
         if (xhr.status === 200 && xhr.response.error !== true) {
-            overlay.remove();
+            if (xhr.response === OOPS_MESSAGE) {
+                alert(xhr.response);
+            } else {
+                overlay.remove();
+            }
+        } else {
+            alert(xhr.status);
         }
     }
 }

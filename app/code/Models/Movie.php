@@ -8,6 +8,8 @@ use PDO;
 
 class Movie
 {
+    CONST LOG_FILE = 'movie';
+
     private int $id;
     private string $title;
     private int $year;
@@ -163,7 +165,9 @@ class Movie
             ];
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -177,13 +181,21 @@ class Movie
             $query = $pdo->prepare($sql);
             $query->execute([$movie->title, $movie->year, $movie->type, $movie->duration, $movie->categories, $movie->poster, $movie->description]);
             if ($query) {
+
+                Movie::uploadPoster();
                 return [
                     'error' => false,
                     'message' => 'Movie was added successfully!'
                 ];
             }
+            return [
+                'error' => true,
+                'message' => 'Something when wrong!'
+            ];
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -268,31 +280,40 @@ class Movie
             $movies = [];
             $invalidMovies = [];
 
-            while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
+            if ($query->fetch()) {
+                while ($result = $query->fetch(PDO::FETCH_ASSOC)) {
 
-                if (Movie::getValidDuration($timeSlot, $result['duration'])) {
-                    $movie = [];
-                    $movie['id'] = $result['id'];
-                    $movie['title'] = $result['title'];
-                    $movie['duration'] = $result['duration'];
-                    $movies[] = $movie;
-                } else {
-                    $movie = [];
-                    $movie['id'] = $result['id'];
-                    $movie['title'] = $result['title'];
-                    $movie['duration'] = $result['duration'];
-                    $invalidMovies[] = $movie;
+                    if (Movie::getValidDuration($timeSlot, $result['duration'])) {
+                        $movie = [];
+                        $movie['id'] = $result['id'];
+                        $movie['title'] = $result['title'];
+                        $movie['duration'] = $result['duration'];
+                        $movies[] = $movie;
+                    } else {
+                        $movie = [];
+                        $movie['id'] = $result['id'];
+                        $movie['title'] = $result['title'];
+                        $movie['duration'] = $result['duration'];
+                        $invalidMovies[] = $movie;
+                    }
                 }
+
+                return [
+                    'error' => false,
+                    'movies' => $movies,
+                    'invalid-movies' => $invalidMovies
+                ];
             }
 
             return [
                 'error' => false,
-                'movies' => $movies,
-                'invalid-movies' => $invalidMovies
+                'message' => 'No movies were found!'
             ];
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -322,7 +343,9 @@ class Movie
             return true;
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -350,7 +373,9 @@ class Movie
             ];
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -369,12 +394,14 @@ class Movie
                 return $movie;
             }
             return [
-                'error' => false,
+                'error' => true,
                 'message' => 'Movie does not exists!'
             ];
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 }

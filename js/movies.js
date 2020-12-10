@@ -8,8 +8,7 @@ function getMovies() {
             alert( 'Error: ' + xhr.status);
             return;
         }
-        var response = xhr.response;
-        document.getElementById('main-content').innerHTML = response;
+        document.getElementById('main-content').innerHTML = xhr.response;
     }
 }
 

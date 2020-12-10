@@ -8,6 +8,8 @@ use Dompdf\Dompdf;
 
 class Ticket
 {
+    CONST LOG_FILE = 'ticket';
+
     public static function getMoviePrice($movieType, $startDateTime) {
         $price = 0.00;
 
@@ -62,7 +64,9 @@ class Ticket
                 'message' => 'Oops! Purchase was not processed.'
             ];
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -89,7 +93,9 @@ class Ticket
             ];
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 

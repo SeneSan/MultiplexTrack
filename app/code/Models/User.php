@@ -4,6 +4,8 @@ namespace Models;
 
 class User
 {
+    CONST LOG_FILE = 'user';
+
     public const NOUSER = 0;
     public const ADMIN = 1;
     public const USER = 2;
@@ -136,7 +138,9 @@ class User
         try {
             $pdo->prepare($sql)->execute([$username, $passHash, $email, $phonenumber, 1]);
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
 
         header('Location: /');
@@ -171,7 +175,9 @@ class User
             }
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
 
         header('Location: /');

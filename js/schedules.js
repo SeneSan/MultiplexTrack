@@ -1,3 +1,5 @@
+const OOPS_MESSAGE = 'Oops! Something went wrong.';
+
 function getEmptySchedule() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'schedule/getView');
@@ -24,12 +26,18 @@ function getTimeSlots() {
     xhr.onload = function () {
         if (xhr.status === 200 && xhr.response.error !== true) {
 
-            let parsed = JSON.parse(xhr.response);
-            let timeSlots = parsed.timeSlots;
+            if (xhr.response === OOPS_MESSAGE) {
+                alert(xhr.response);
+            } else {
+                let parsed = JSON.parse(xhr.response);
+                let timeSlots = parsed.timeSlots;
 
-            timeSlots.forEach((timeSlot) => {
-               setOverlay(timeSlot);
-            });
+                timeSlots.forEach((timeSlot) => {
+                    setOverlay(timeSlot);
+                });
+            }
+        } else {
+            alert( 'Error: ' + xhr.status);
         }
     }
 }

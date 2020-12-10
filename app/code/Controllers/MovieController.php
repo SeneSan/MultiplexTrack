@@ -10,7 +10,12 @@ class MovieController
 {
     public function getMovies() {
 
-        Movie::getMovies();
+        $result = Movie::getMovies();
+        if ($result) {
+
+        } else {
+            echo OOPS_MESSAGE;
+        }
     }
 
     public function addMovie() {
@@ -26,9 +31,11 @@ class MovieController
 
         header('Content-type:application/json;charset=utf-8');
         $result = Movie::addMovie($movie);
-        Movie::uploadPoster();
-
-        echo json_encode($result);
+        if ($result) {
+            echo json_encode($result);
+        } else {
+            echo OOPS_MESSAGE;
+        }
     }
 
     public function getMovieByTitle($title, $timeSlot) {
@@ -39,10 +46,7 @@ class MovieController
         if ($movies) {
             echo json_encode($movies);
         } else {
-            echo json_encode([
-                'error' => false,
-                'message' => 'No movies were found'
-            ]);
+            echo OOPS_MESSAGE;
         }
     }
 }

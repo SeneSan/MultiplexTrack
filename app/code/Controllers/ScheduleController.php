@@ -11,10 +11,11 @@ class ScheduleController
     public function getView() {
         $view = include __ROOT__ . 'app/frontend/Schedules/schedules.phtml';
 
-        return [
-          'message' => 'Success',
-          'html' => $view
-        ];
+        if ($view) {
+            return $view;
+        } else {
+            return OOPS_MESSAGE;
+        }
     }
 
     public function publish() {
@@ -25,21 +26,35 @@ class ScheduleController
             $timeSlot = $_POST['time_slot'];
 
             $response = TimeSlot::publishMovie($movieId, $timeSlot);
-            header('Content-type:application/json;charset=utf-8');
-            echo json_encode($response);
+            if ($response) {
+                header('Content-type:application/json;charset=utf-8');
+                echo json_encode($response);
+            } else {
+                echo OOPS_MESSAGE;
+            }
         }
     }
 
     public function getCurrentTimeSlots() {
-        header('Content-type:application/json;charset=utf-8');
-        echo json_encode(TimeSlot::getTimeSlots());
+        $timeSlots = TimeSlot::getTimeSlots();
+        if ($timeSlots) {
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode($timeSlots);
+        } else {
+            echo OOPS_MESSAGE;
+        }
     }
 
     public function removeTimeSlot() {
         if (isset($_POST['remove_date_time'])) {
             $startDateTime = $_POST['remove_date_time'];
-            header('Content-type:application/json;charset=utf-8');
-            echo json_encode(TimeSlot::removeTimeSlot($startDateTime));
+            $response = TimeSlot::removeTimeSlot($startDateTime);
+            if ($response) {
+                header('Content-type:application/json;charset=utf-8');
+                echo json_encode($response);
+            } else {
+                echo OOPS_MESSAGE;
+            }
         }
     }
 }

@@ -6,6 +6,8 @@ namespace Models;
 
 class TimeSlot
 {
+    CONST LOG_FILE = 'timeslot';
+
     private $screenId;
     private $movieId;
     private $startDateTime;
@@ -91,7 +93,9 @@ class TimeSlot
                 ];
             }
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -133,7 +137,9 @@ class TimeSlot
             }
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -155,7 +161,9 @@ class TimeSlot
             }
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -175,7 +183,9 @@ class TimeSlot
                 ];
             }
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -216,7 +226,9 @@ class TimeSlot
             return $response;
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 
@@ -237,7 +249,9 @@ class TimeSlot
             return 'No time slot was found';
 
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), $e->getCode());
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
         }
     }
 }

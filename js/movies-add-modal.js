@@ -36,15 +36,25 @@ function addMovie() {
     xhr.send(formData);
 
     xhr.onload = function () {
-        var response = JSON.parse(xhr.response);
-        var div = document.getElementById('add-movie-modal-message');
-        div.innerText = response['message'];
-        div.style.display = 'block';
-
-        if (response['error'] == 'true') {
-            div.style.backgroundColor = 'red';
-        } else {
-            div.style.backgroundColor = 'lightgreen';
+        if (xhr.status !== 200) {
+            alert( 'Error: ' + xhr.status);
+            return;
         }
+
+        let div = document.getElementById('add-movie-modal-message');
+
+        if (xhr.response === 'Oops! Something when wrong.') {
+            alert(xhr.response);
+        } else {
+            let response = JSON.parse(xhr.response);
+            div.innerText = response['message'];
+            if (response['error'] === true) {
+                div.style.backgroundColor = 'red';
+            } else {
+                div.style.backgroundColor = 'lightgreen';
+            }
+
+        }
+        div.style.display = 'block';
     }
 }

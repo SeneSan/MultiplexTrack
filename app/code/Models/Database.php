@@ -7,6 +7,8 @@ use PDO;
 
 class Database
 {
+    CONST LOG_FILE = 'database';
+
     public static function getConnection() {
 
         $configurationFile = simplexml_load_file(__ROOT__ . 'local.xml');
@@ -22,19 +24,7 @@ class Database
         try {
             return new PDO($dsn, $dbUser, $dbPass);
         } catch (\PDOException $e) {
-            throw new \PDOException($e->getMessage(), (int)$e->getCode());
+            Logger::logError($e, self::LOG_FILE);
         }
-    }
-
-    public static function select($table , $params = []) {
-        $pdo = self::getConnection();
-
-
-    }
-
-    public static function insert ($table, $columns, $values) {
-        $pdo = self::getConnection();
-
-
     }
 }
