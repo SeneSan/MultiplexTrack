@@ -11,9 +11,7 @@ class MovieController
     public function getMovies() {
 
         $result = Movie::getMovies();
-        if ($result) {
-
-        } else {
+        if (!$result) {
             echo OOPS_MESSAGE;
         }
     }

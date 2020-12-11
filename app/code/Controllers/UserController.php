@@ -7,16 +7,25 @@ use Models\User;
 class UserController
 {
     public function login() {
-        if (isset($_POST['login'])) {
+
+        $response = User::login();
+
+        if ($response instanceof User) {
             $_SESSION['user'] = User::login();
-            header('location: /');
-            exit();
+        } elseif (gettype($response) === 'string') {
+            echo $response;
+        } else {
+            echo OOPS_MESSAGE;
         }
     }
 
     public function register() {
-        if (isset($_POST['register'])) {
-            User::register();
+        $response = User::register();
+
+        if (gettype($response) == 'string') {
+            echo $response;
+        } else {
+            echo OOPS_MESSAGE;
         }
     }
 

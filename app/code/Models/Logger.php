@@ -28,4 +28,14 @@ class Logger
             fclose($logFile);
         }
     }
+
+    public static function logInvalidLogin($username, $message) {
+        $now = date('Y-m-d - H:s:i - ', time());
+        $path = __ROOT__ . 'log/login-failed-attempts.txt';
+        $log = $now . $username . ' - ' . $message;
+
+        $content  = file_get_contents($path);
+        $content .= PHP_EOL . $log;
+        file_put_contents($path, $content);
+    }
 }

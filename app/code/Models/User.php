@@ -123,6 +123,29 @@ class User
         $this->phonenumber = $phonenumber;
     }
 
+    public static function existingUser($username, $email) {
+        $pdo = Database::getConnection();
+
+        $sql = 'SELECT count(id) as nr FROM users WHERE username = ? or email = ?';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([$username, $email]);
+
+            $response = $stmt->fetch();
+
+            if (isset($response['nr']) && $response['nr'] == 0 ) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
+    }
+
     public static function register() {
 
         $username = $_POST['reg_username'];
@@ -135,15 +158,19 @@ class User
         $passHash = password_hash($password, PASSWORD_DEFAULT);
 
         $sql = "INSERT INTO users (username, password, email, phonenumber, type) VALUES (?, ?, ?, ?, ?)";
-        try {
-            $pdo->prepare($sql)->execute([$username, $passHash, $email, $phonenumber, 1]);
-        } catch (\PDOException $e) {
-            Logger::logError($e, self::LOG_FILE);
-        } catch (\Error $err) {
-            Logger::logError($err, self::LOG_FILE);
-        }
 
-        header('Location: /');
+        if (!self::existingUser($username, $email)) {
+            try {
+                $pdo->prepare($sql)->execute([$username, $passHash, $email, $phonenumber, 1]);
+                return 'User registration completed!';
+            } catch (\PDOException $e) {
+                Logger::logError($e, self::LOG_FILE);
+            } catch (\Error $err) {
+                Logger::logError($err, self::LOG_FILE);
+            }
+        } else {
+            return 'User/Email already exists!';
+        }
     }
 
     public static function login() {
@@ -168,10 +195,14 @@ class User
 
                 return new User($userId, $username, $password, $email, $phonenumber, $type);
 
-            } elseif ($username === $result['username']) {
-                echo 'Incorrect credentials!';
+            } elseif (!(gettype($result) === 'boolean') && $username === $result['username']) {
+                $message = 'Incorrect credentials!';
+                Logger::logInvalidLogin($username, $message);
+                return $message;
             } else {
-                echo 'User does not exist!';
+                $message = 'User does not exist!';
+                Logger::logInvalidLogin($username, $message);
+                return $message;
             }
 
         } catch (\PDOException $e) {
@@ -179,8 +210,6 @@ class User
         } catch (\Error $err) {
             Logger::logError($err, self::LOG_FILE);
         }
-
-        header('Location: /');
     }
 
     public static function logout() {
