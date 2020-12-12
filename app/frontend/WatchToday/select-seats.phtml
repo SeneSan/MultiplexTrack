@@ -1,0 +1,22 @@
+<?php
+/**
+ * @var $screenID
+ */
+
+$letters = [1 => 'A', 2 => 'B' , 3 => 'C', 4 => 'D', 5 => 'E', 6 => 'F'];
+?>
+<hr>
+<div class="section-title">Please select the seats</div>
+<div class="seats-section">
+    <di>
+        <div>Screen <?php echo $screenID; ?></div>
+        <hr class="screen">
+    </di>
+    <div class="seats">
+    <?php for ($i = 1; $i <= 6; $i++): ?>
+        <?php for ($j = 1; $j <= 6; $j++): ?>
+            <div id="<?php echo $j . $letters[$i]; ?>" class="seat free"><?php echo $j . $letters[$i]; ?></div>
+        <?php endfor;?>
+    <?php endfor;?>
+    </div>
+</div>

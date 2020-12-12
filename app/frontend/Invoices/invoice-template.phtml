@@ -1,21 +1,35 @@
-<div>
-    <div>Invoice Nr: %d</div>
-    <div>Screen: %d</div>
-    <div>Start at: %s</div>
-    <table>
-        <tr>
-            <th>Movie</th>
-            <th>Type</th>
-            <th>Nr seats</th>
-            <th>Friday Discount</th>
-            <th>Total Price</th>
-        </tr>
-        <tr>
-            <td>%s</td>
-            <td>%s</td>
-            <td>%d</td>
-            <td>%s</td>
-            <td>$ %s</td>
-        </tr>
-    </table>
-</div>
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="/Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Controllers/WatchTodayController.php">
+</head>
+<body>
+    <div>
+        <div><b>Invoice Nr:</b> %d</div>
+        <div><b>Screen:</b> %d</div>
+        <div><b>Start at:</b> %s</div>
+        <br>
+        <table class="invoice">
+            <tr>
+                <th>Movie</th>
+                <th>Type</th>
+                <th>Seat(s)</th>
+                <th>Friday Discount</th>
+                <th>Total Price</th>
+            </tr>
+            <tr>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>%s</td>
+                <td>$ %s</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

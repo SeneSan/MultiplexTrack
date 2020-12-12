@@ -1,0 +1,7 @@
+table.invoice {
+    border: #555555 solid 1px;
+}
+
+table.invoice th {
+    background-color: #aaaaaa;
+}

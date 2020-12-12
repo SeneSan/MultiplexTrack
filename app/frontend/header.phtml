@@ -1,5 +1,5 @@
-<!--no user navigation header-->
 <?php if (!isset($_SESSION['user'])) : ?>
+    <!--no user navigation header-->
     <nav class="nav-no-user">
         <div class="red align-center nav-element" onclick="window.location.href = '/'">Multiplex Track</div>
         <div class="align-center">No User</div>
@@ -9,26 +9,23 @@
     </nav>
 <?php include '/Users/macbook/PhpstormProjects/MultiplexTrack/app/frontend/User/login.phtml'; endif;?>
 
-<!--regular user navigation header-->
 <?php if (isset($_SESSION['user']) && $_SESSION['user']->getType() == 1) : ?>
+    <!--regular user navigation header-->
     <nav class="nav-user">
         <div class="red align-center nav-element" onclick="window.location.href = '/'">Multiplex Track</div>
         <div class="align-center">Regular User</div>
-        <button class="open-button align-center" onclick="">Account</button>
         <button class="open-button align-center nav-end-element" onclick="window.location.href = '/user/logout'">Logout</button>
     </nav>
 <?php endif; ?>
 
-<!--admin user navigation header-->
 <?php if (isset($_SESSION['user']) && $_SESSION['user']->getType() == 2) : ?>
+    <!--admin user navigation header-->
     <nav class="nav-admin">
         <div class="red align-center nav-element" onclick="window.location.href = '/'">Multiplex Track</div>
         <div class="align-center">Admin User</div>
         <button class="open-button align-center" onclick="">Statistics</button>
         <button class="open-button align-center" onclick="changeTitle('Schedules'); getEmptySchedule();">Schedules</button>
-        <button class="open-button align-center" onclick="">Users</button>
         <button class="open-button align-center" onclick="changeTitle('Movies'); getMovies();">Movies</button>
-        <button class="open-button align-center" onclick="">Account</button>
         <button class="open-button align-center nav-end-element" onclick="window.location.href = '/user/logout'">Logout</button>
     </nav>
 <?php endif; ?>

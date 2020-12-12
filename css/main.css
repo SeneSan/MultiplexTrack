@@ -27,13 +27,13 @@
 .nav-user {
     display: grid;
     background: LightSkyblue;
-    grid-template-columns: auto 120px 100px 100px 35px;
+    grid-template-columns: auto 120px 100px 35px;
 }
 
 .nav-admin {
     display: grid;
     background: LightSkyblue;
-    grid-template-columns: auto 120px 100px 100px 100px 100px 100px 100px 35px;
+    grid-template-columns: auto 120px 100px 100px 100px 100px 35px;
 }
 
 .align-center {

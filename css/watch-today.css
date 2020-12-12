@@ -92,13 +92,86 @@ hr {
     background-color: greenyellow;
 }
 
-.seats-total-grid {
+.total-grid {
     display: grid;
-    grid-template-columns: auto auto;
+    grid-template-columns: auto 100px;
+    grid-gap: 15px;
 }
 
 .price-grid {
     display: grid;
     grid-template-columns: 15px auto;
     font-size: large;
+}
+
+.seats {
+    display: grid;
+    grid-template-columns: 20px 20px 20px 20px 20px 20px;
+    grid-gap: 5px;
+    line-height: 20px;
+}
+
+.seat {
+    width: 20px;
+    height: 20px;
+    border-radius: 4px;
+    border: #888888 solid 1px;
+    cursor: pointer;
+}
+
+.seat.free {
+    background-color: #82ff7f;
+}
+
+.seat.free:hover {
+    border: dodgerblue dashed 1px;
+}
+
+.seat.selected {
+    background-color: goldenrod;
+}
+
+.seat.selected:hover {
+    border: indianred dashed 1px;
+}
+
+.seat.sold {
+    background-color: darkred;
+    color: #f1f1f1;
+    cursor: default;
+}
+
+.seats-section {
+    width: 145px;
+    margin: auto;
+    text-align: center;
+}
+
+hr.screen {
+    width: 100px;
+}
+
+#seats-selection-section {
+    text-align: center;
+    display: grid;
+    grid-gap: 10px;
+}
+
+.section-title {
+    font-weight: bold;
+}
+
+#watch-today-info {
+    text-align: center;
+}
+
+.confirmed-message {
+    font-size: 20px;
+    height: 40px;
+    line-height: 40px;
+    width: 90%;
+    background-color: #5fbc4d;
+    border: #888888 solid 1px;
+    border-radius: 10px;
+    margin: auto;
 }

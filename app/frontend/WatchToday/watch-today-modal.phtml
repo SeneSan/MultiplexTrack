@@ -16,58 +16,60 @@
             ><?php echo $movieDetails['title']; ?></h3>
             <span class="close" onclick="closeWatchTodayModal()">&times;</span>
         </div>
-        <div>
-            <div class="field-description">Short Description</div>
-            <p><?php echo $movieDetails['description']; ?></p>
-        </div>
-        <div class="details-grid">
+        <div id="watch-today-info">
             <div>
-                <div class="field-description">Categories</div>
-                <p><?php echo $movieDetails['categories']; ?></p>
+                <div class="field-description">Short Description</div>
+                <p><?php echo $movieDetails['description']; ?></p>
             </div>
-            <div>
-                <div class="field-description">Duration</div>
-                <p><?php echo $movieDetails['duration']; ?> min</p>
-            </div>
-            <div>
-                <div class="field-description">Type</div>
-                <p><?php echo $movieDetails['type']; ?></p>
-            </div>
-            <div>
-                <div class="field-description">Release year</div>
-                <p><?php echo $movieDetails['year']; ?></p>
-            </div>
-        </div>
-        <hr>
-        <div class="field-horizontal-grid">
-            <span></span>
-            <h4 class="grid-justify-center">Available today</h4>
-            <span></span>
-        </div>
-        <div class="available-screens-grid">
-            <?php foreach ($movieTimeSlots['screens'] as $screen => $hours): ?>
-                <div class="available-hours-grid">
-                    <div class="watch-today-screen"><?php echo ucfirst(str_replace('_', ' ', $screen)); ?></div>
-                    <?php foreach ($hours as $hour): ?>
-                        <div class="watch-today-screen watch-today-hours" hour="<?php echo $hour ?>" onclick="selectHour(this)"><?php echo $hour ?></div>
-                    <?php endforeach; ?>
+            <div class="details-grid">
+                <div>
+                    <div class="field-description">Categories</div>
+                    <p><?php echo $movieDetails['categories']; ?></p>
                 </div>
-            <?php endforeach; ?>
-        </div>
-        <div class="seats-total-grid">
-            <div>
-                <div><b>Number of seats:</b></div>
-                <input id="movie-seats" type="number" value="1" oninput="changePrice(this)"/>
-            </div>
-            <div>
-                <div><b>Total amount:</b></div>
-                <div class="price-grid">
-                    <div>$ </div>
-                    <div id="total-price" initial-price="<?php echo $price; ?>"><?php echo $price; ?></div>
+                <div>
+                    <div class="field-description">Duration</div>
+                    <p><?php echo $movieDetails['duration']; ?> min</p>
+                </div>
+                <div>
+                    <div class="field-description">Type</div>
+                    <p><?php echo $movieDetails['type']; ?></p>
+                </div>
+                <div>
+                    <div class="field-description">Release year</div>
+                    <p><?php echo $movieDetails['year']; ?></p>
                 </div>
             </div>
+            <hr>
+            <div class="field-horizontal-grid">
+                <span></span>
+                <h4 class="grid-justify-center">Available time slots today</h4>
+                <span></span>
+            </div>
+            <div class="available-screens-grid">
+                <?php foreach ($movieTimeSlots['screens'] as $screen => $hours): ?>
+                    <div class="available-hours-grid">
+                        <div class="watch-today-screen" screen="<?php echo substr($screen, 7, 1);?>"><?php echo ucfirst(str_replace('_', ' ', $screen)); ?></div>
+                        <?php foreach ($hours as $hour): ?>
+                            <div class="watch-today-screen watch-today-hours" hour="<?php echo $hour ?>" onclick="selectHour(this)"><?php echo $hour ?></div>
+                        <?php endforeach; ?>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+            <div id="seats-selection-section"></div>
+            <br>
+            <hr>
+            <br>
+            <div class="total-grid">
+                <button onclick="confirmPurchase()">Confirm purchase</button>
+                <div>
+                    <div><b>Total amount:</b></div>
+                    <div class="price-grid">
+                        <div>$ </div>
+                        <div id="total-price" initial-price="<?php echo $price; ?>">0.00</div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <button onclick="confirmPurchase()">Confirm purchase</button>
     </div>
 </div>
 <?php endif;?>

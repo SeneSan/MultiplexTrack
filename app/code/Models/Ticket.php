@@ -41,21 +41,22 @@ class Ticket
         return 'No';
     }
 
-    public static function sellTickets($timeSlotId, $nrSeats, $totalPrice, $userId) {
+    public static function sellTickets($timeSlotId, $seat, $price, $userId) {
         $pdo = Database::getConnection();
+        $formatPrice = number_format((int) $price, 2);
 
-        $sql = "INSERT INTO tickets (time_slot_id, nr_seats, total_price, user_id) VALUE (? , ? , ?, ?)";
+        $sql = "INSERT INTO tickets (time_slot_id, seat_nr, price, user_id) VALUE (? , ? , ?, ?)";
 
         try {
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$timeSlotId, $nrSeats, $totalPrice, $userId]);
+            $stmt->execute([$timeSlotId, $seat, $formatPrice, $userId]);
 
             if ($stmt) {
                 $lastTicketId = $pdo->lastInsertId();
 
                 return [
                     'error' => false,
-                    'new-ticket' => self::getTicketById($lastTicketId)['ticket']
+                    'new-ticket' => self::getTicketById($lastTicketId)
                 ];
             }
 
@@ -82,10 +83,7 @@ class Ticket
             $result = $stmt->fetch();
 
             if ($result) {
-                return [
-                    'error' => false,
-                    'ticket' => $result
-                ];
+                return $result;
             }
             return [
                 'error' => true,
@@ -99,7 +97,7 @@ class Ticket
         }
     }
 
-    public static function generatePDF($ticketId, $screenID, $startDateTime, $movie, $nrSeats, $totalPrice) {
+    public static function generatePDF($ticketId, $screenID, $startDateTime, $movie, $seats, $totalPrice) {
         $dompdf = new Dompdf();
 
         $startsAt = date('H:i l d-m-Y', strtotime($startDateTime));
@@ -108,12 +106,34 @@ class Ticket
         $fridayDiscount = self::isFridayDiscount($startDateTime);
 
         $invoiceTemplate = file_get_contents(__ROOT__ . 'app/frontend/Invoices/invoice-template.phtml');
-        $invoice = sprintf($invoiceTemplate, $ticketId, $screenID, $startsAt, $movieTitle, $movieType, $nrSeats, $fridayDiscount, $totalPrice);
+        $invoice = sprintf($invoiceTemplate, $ticketId, $screenID, $startsAt, $movieTitle, $movieType, $seats, $fridayDiscount, $totalPrice);
 
         $dompdf->loadHtml($invoice);
         $dompdf->setPaper('A4', 'landscape');
         $dompdf->render();
 
         file_put_contents(__ROOT__ . "invoices/invoice_{$ticketId}.pdf", $dompdf->output());
+    }
+
+    public static function getSeats($hour, $screenId) {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT t.seat_nr FROM tickets as t INNER JOIN time_slots as ts ON t.time_slot_id = ts.id WHERE ts.start_date_time = concat(curdate(), ?) and ts.screen_id = ?;";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute([" $hour:00", $screenId]);
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                return $results;
+            }
+            return 'No seats were found.';
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
     }
 }
