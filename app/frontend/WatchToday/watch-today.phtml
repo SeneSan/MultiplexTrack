@@ -7,5 +7,7 @@
             <div class="movie-title"><?php echo $movie['title']; ?></div>
         </div>
         <?php endforeach; ?>
-    <?php endif; ?>
+    <?php else: ?>
+        <div>No movies available today!</div>
+    <?php endif;?>
 </div>

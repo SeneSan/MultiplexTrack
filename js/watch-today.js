@@ -6,11 +6,17 @@ function showWatchTodayModal(movieId) {
 
     xhr.onload = function () {
         if (xhr.status === 200) {
-            let modalWrapper = document.getElementById('watch-today-modal');
-            modalWrapper.innerHTML = xhr.response;
+            if (xhr.response === OOPS_MESSAGE){
+                alert(xhr.response);
+            } else {
+                let modalWrapper = document.getElementById('watch-today-modal');
+                modalWrapper.innerHTML = xhr.response;
 
-            let modal = modalWrapper.children[0];
-            modal.style.display = 'block';
+                let modal = modalWrapper.children[0];
+                modal.style.display = 'block';
+            }
+        } else {
+            alert('Error: ' + xhr.status);
         }
     }
 }
@@ -58,10 +64,16 @@ function confirmPurchase() {
 
     xhr.onload = function () {
         if (xhr.status === 200) {
-            let parent = document.getElementsByClassName('watch-today-modal-content')[0];
-            let pdf = document.createElement('div');
-            pdf.innerHTML = xhr.response;
-            parent.appendChild(pdf);
+            if (xhr.response === OOPS_MESSAGE) {
+                alert(xhr.response);
+            } else {
+                let parent = document.getElementsByClassName('watch-today-modal-content')[0];
+                let pdf = document.createElement('div');
+                pdf.innerHTML = xhr.response;
+                parent.appendChild(pdf);
+            }
+        } else {
+            alert('Error: ' + xhr.status)
         }
     }
 }

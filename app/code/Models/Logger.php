@@ -18,15 +18,9 @@ class Logger
         $path = __ROOT__ . 'log/' . $file . '-error.txt';
         $log = $now . $error->getMessage() . ' ' . $error->getFile() . ':' . $error->getLine();
 
-        if (file_exists($path)) {
-            $content  = file_get_contents($path);
-            $content .= PHP_EOL .$log;
-            file_put_contents($path, $content);
-        } else {
-            $logFile = fopen($path, 'w');
-            fwrite($logFile, $log);
-            fclose($logFile);
-        }
+        $content  = file_get_contents($path);
+        $content .= PHP_EOL .$log;
+        file_put_contents($path, $content);
     }
 
     public static function logInvalidLogin($username, $message) {

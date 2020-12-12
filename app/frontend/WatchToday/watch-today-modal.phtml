@@ -5,7 +5,7 @@
  * @var $price
  */
 ?>
-
+<?php if (isset($movieDetails['id'])) :?>
 <div class="watch-today-modal">
     <div class="watch-today-modal-content">
         <div class="field-horizontal-grid">
@@ -70,3 +70,4 @@
         <button onclick="confirmPurchase()">Confirm purchase</button>
     </div>
 </div>
+<?php endif;?>
