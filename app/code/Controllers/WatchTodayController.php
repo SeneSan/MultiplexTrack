@@ -28,6 +28,8 @@ class WatchTodayController
 
     public function sellTickets() {
         if (isset($_POST['start_date_time'])) {
+            $movieId = $_POST['movie_id'];
+            $screenId = $_POST['screen_id'];
             $startDateTime = $_POST['start_date_time'];
 
             $seats = $_POST['seats'];
@@ -37,7 +39,7 @@ class WatchTodayController
             $singlePrice = $_POST['single_price'];
             $totalPrice = $_POST['total_price'];
             $userId = $_SESSION['user']->getUserId();
-            $timeSlot = TimeSlot::getTimeSlotByDateTime($startDateTime);
+            $timeSlot = TimeSlot::getTimeSlotByDateTime($startDateTime, $screenId, $movieId);
 
             if (isset($timeSlot['id'])) {
 
@@ -83,10 +85,55 @@ class WatchTodayController
         }
     }
 
+    public function getFilteredMovies($hour, $screenId, $category) {
+        if ($hour != 'none') {
+            $formatHour = str_replace('-', ':' , $hour);
+        } else {
+            $formatHour = null;
+        }
+
+        if ($screenId != 'none') {
+            $formatScreenID = $screenId;
+        } else {
+            $formatScreenID = null;
+        }
+
+        if ($category != 'none') {
+            $formatCategory = $category;
+        } else {
+            $formatCategory = null;
+        }
+
+        $filteredMovies = Movie::getTodayMovies($formatHour, $formatScreenID, $formatCategory);
+
+        if (gettype($filteredMovies) == 'array') {
+            $response = [
+                'error' => false,
+                'movies_list_layout' => self::getMovieListLayout($filteredMovies)
+            ];
+
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode($response);
+        } else {
+            header('Content-type:application/json;charset=utf-8');
+            echo json_encode([
+                'error' => true,
+                'message' => $filteredMovies
+            ]);
+        }
+    }
+
     public static function getSeatsLayout($screenId) {
         ob_start();
         $screenID = $screenId;
         include __ROOT__ . 'app/frontend/WatchToday/select-seats.phtml';
+        return ob_get_clean();
+    }
+
+    public static function getMovieListLayout($movies) {
+        ob_start();
+        $currentMovies = $movies;
+        include __ROOT__ . 'app/frontend/WatchToday/watch-today-movies-list.phtml';
         return ob_get_clean();
     }
 }

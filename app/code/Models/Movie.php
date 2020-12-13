@@ -349,28 +349,68 @@ class Movie
         }
     }
 
-    public static function getTodayMovies() {
+    public static function getTodayMovies($hour = null, $screenId = null, $category = null) {
         $pdo = Database::getConnection();
 
-        $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where start_date_time like concat(curdate(), '%');";
-
         try {
-            $stmt = $pdo->prepare($sql);
-            $stmt->execute();
+            switch (true) {
+                case ($hour != null && $screenId != null && $category != null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time = concat(curdate(), ' ', ?) and t.screen_id = ? and m.categories like ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$hour, $screenId, '%' . $category . '%']);
+                    break;
+
+                case ($hour != null && $screenId != null && $category == null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time = concat(curdate(), ' ', ?) and t.screen_id = ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$hour, $screenId]);
+                    break;
+
+                case ($hour != null && $screenId == null && $category == null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time = concat(curdate(), ' ', ?);";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$hour]);
+                    break;
+
+                case ($hour != null && $screenId == null && $category != null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time = concat(curdate(), ' ', ?) and m.categories like ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$hour, '%' . $category . '%']);
+                    break;
+
+                case ($hour == null && $screenId == null && $category != null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time like concat(curdate(), '%') and m.categories like ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute(['%' . $category . '%']);
+                    break;
+
+                case ($hour == null && $screenId != null && $category == null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time like concat(curdate(), '%') and t.screen_id like ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$screenId]);
+                    break;
+
+                case ($hour == null && $screenId != null && $category != null):
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time like concat(curdate(), '%') and t.screen_id = ? and m.categories like ?;";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute([$screenId, '%' . $category . '%']);
+                    break;
+
+                default:
+                    $sql = "select distinct m.id, m.title, m.poster from time_slots as t inner join movies as m on t.movie_id = m.id where t.start_date_time like concat(curdate(), '%');";
+                    $stmt = $pdo->prepare($sql);
+                    $stmt->execute();
+                    break;
+
+            }
 
             $results = $stmt->fetchAll();
 
             if ($results) {
-                return [
-                    'error' => false,
-                    'movies' => $results
-                ];
+                return $results;
             }
 
-            return [
-                'error' => false,
-                'message' => 'No movies are scheduled for today!'
-            ];
+            return 'No movies were found matching the filters!';
 
         } catch (\PDOException $e) {
             Logger::logError($e, self::LOG_FILE);

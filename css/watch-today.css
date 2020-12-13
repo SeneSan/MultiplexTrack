@@ -162,7 +162,7 @@ hr.screen {
 }
 
 #watch-today-info {
-    text-align: center;
+    /*text-align: center;*/
 }
 
 .confirmed-message {
@@ -173,5 +173,14 @@ hr.screen {
     background-color: #5fbc4d;
     border: #888888 solid 1px;
     border-radius: 10px;
+    margin: auto;
+}
+
+#movie-filters {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    grid-gap: 20px;
+    font-size: 12px;
+    width: 700px;
     margin: auto;
 }

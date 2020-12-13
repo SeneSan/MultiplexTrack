@@ -1,13 +1,52 @@
+<?php
+use Controllers\WatchTodayController;
+use Models\Movie;
+use Models\TimeSlot;
+?>
+
 <div id="watch-today-modal"></div>
-<div class="watch-today-grid">
-    <?php if (isset(\Models\Movie::getTodayMovies()['movies'])): ?>
-        <?php foreach (\Models\Movie::getTodayMovies()['movies'] as $movie): ?>
-        <div>
-            <img class="movie-image" src="images/<?php echo $movie['poster']; ?>" alt="dummy_poster" onclick="showWatchTodayModal(<?php echo $movie['id']; ?>)">
-            <div class="movie-title"><?php echo $movie['title']; ?></div>
-        </div>
-        <?php endforeach; ?>
-    <?php else: ?>
-        <div>No movies available today!</div>
-    <?php endif;?>
+<?php if (isset($_SESSION['user'])): ?>
+<div id="movie-filters">
+    <div>
+        <label for="filter-hour">Starts From </label>
+        <select name="hour" id="filter-hour">
+            <option value="none" selected>Not selected</option>
+            <?php for ($i = 9; $i <= 17; $i++): ?>
+                <?php for ($j = 0; $j <= 1; $j++): ?>
+                    <option value="<?php echo $i; if ($j == 0): echo '-00'; else : echo '-30'; endif;?>"><?php echo $i; if ($j == 0): echo ':00'; else : echo ':30'; endif;?></option>
+                <?php endfor; ?>
+            <?php endfor;?>
+        </select>
+    </div>
+    <div>
+        <label for="filter-screen">Screen </label>
+        <select name="screen" id="filter-screen">
+            <option value="none" selected>Not selected</option>
+            <option value="1">Screen 1</option>
+            <option value="2">Screen 2</option>
+            <option value="3">Screen 3</option>
+            <option value="4">Screen 4</option>
+        </select>
+    </div>
+    <div>
+        <label for="filter-category">Category </label>
+        <select name="category" id="filter-category">
+            <option value="none" selected>Not selected</option>
+            <?php if (gettype(TimeSlot::getTodayCategories()) == 'array'): ?>
+                <?php foreach (TimeSlot::getTodayCategories() as $category): ?>
+                    <option value="<?php echo $category?>"><?php echo $category?></option>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </select>
+    </div>
+    <div>
+        <button onclick="clearFilters()">Clear all filters</button>
+    </div>
+</div>
+<?php endif; ?>
+<br>
+<hr>
+<br>
+<div id="watch-today-movies-list">
+    <?php echo WatchTodayController::getMovieListLayout(Movie::getTodayMovies()); ?>
 </div>

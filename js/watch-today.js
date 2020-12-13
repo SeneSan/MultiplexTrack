@@ -1,3 +1,39 @@
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('#movie-filters select').forEach(function (element) {
+        element.addEventListener('change', function () {
+            let hour = document.querySelector('#filter-hour').value;
+            let screenId = document.querySelector('#filter-screen').value;
+            let category = document.querySelector('#filter-category').value;
+
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', 'watchToday/getFilteredMovies/' + hour + '/' + screenId + '/' + category);
+            xhr.send();
+
+            xhr.onload = function () {
+                if (xhr.status !== 200) {
+                    alert('Error: ' + xhr.status);
+                }
+
+                let list = document.getElementById('watch-today-movies-list');
+                list.innerHTML = '';
+
+                let response = JSON.parse(xhr.response);
+
+                if (response['error'] === false) {
+                    list.innerHTML = response['movies_list_layout'];
+                } else {
+                    list.style.textAlign = 'center';
+                    list.innerText = response['message'];
+                }
+            }
+        });
+    });
+});
+
+function clearFilters() {
+    window.location = '/';
+}
+
 function showWatchTodayModal(movieId) {
     let xhr = new XMLHttpRequest();
 
@@ -95,6 +131,8 @@ function confirmPurchase() {
         alert('Please select at least one seat!');
     } else {
 
+        let movieId = document.getElementById('movie-title').getAttribute('movie-id');
+        let screenId = document.querySelector('[selected]').parentElement.children[0].getAttribute('screen');
         let date = document.getElementById('movie-title').getAttribute('date');
         let hour = document.querySelector('[selected].watch-today-hours').getAttribute('hour');
 
@@ -109,6 +147,8 @@ function confirmPurchase() {
         let xhr = new XMLHttpRequest();
 
         let formData = new FormData();
+        formData.append('movie_id', movieId);
+        formData.append('screen_id', screenId);
         formData.append('start_date_time', date + ' ' + hour + ':00');
         formData.append('seats', seats);
         formData.append('single_price', singlePrice);
@@ -128,9 +168,11 @@ function confirmPurchase() {
                     let confirmed = document.createElement('div');
                     confirmed.className = 'confirmed-message';
                     confirmed.innerText = 'Purchase successfully processed!';
+                    confirmed.style.textAlign = 'center';
 
                     let pdf = document.createElement('div');
                     pdf.innerHTML = xhr.response;
+                    pdf.style.textAlign = 'center';
 
                     parent.appendChild(confirmed);
                     parent.appendChild(document.createElement('br'));

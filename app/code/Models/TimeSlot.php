@@ -232,14 +232,14 @@ class TimeSlot
         }
     }
 
-    public static function getTimeSlotByDateTime($startDateTime) {
+    public static function getTimeSlotByDateTime($startDateTime, $screenId, $movieId) {
         $pdo = Database::getConnection();
 
-        $sql = "SELECT * FROM time_slots WHERE start_date_time = ?";
+        $sql = "SELECT * FROM time_slots WHERE start_date_time = ? and screen_id = ? and movie_id = ?";
 
         try {
             $stmt = $pdo->prepare($sql);
-            $stmt->execute([$startDateTime]);
+            $stmt->execute([$startDateTime, $screenId, $movieId]);
 
             $result = $stmt->fetch();
 
@@ -247,6 +247,35 @@ class TimeSlot
                 return $result;
             }
             return 'No time slot was found';
+
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
+    }
+
+    public static function getTodayCategories() {
+        $pdo = Database::getConnection();
+
+        $sql = "SELECT m.categories FROM time_slots as ts INNER JOIN movies as m ON ts.movie_id = m.id WHERE ts.start_date_time LIKE concat(curdate(), '%')";
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                $finalCategories = [];
+                foreach ($results as $categories) {
+                    $arr = explode(', ', $categories['categories']);
+                    $finalCategories = array_merge($arr, $finalCategories);
+                }
+
+                return array_unique($finalCategories);
+            }
+            return 'No categories were found';
 
         } catch (\PDOException $e) {
             Logger::logError($e, self::LOG_FILE);
