@@ -1,0 +1,11 @@
+2020-12-11 - 18:07:22 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:157
+2020-12-11 - 18:35:23 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:157
+2020-12-11 - 18:39:49 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 18:05:50 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 18:18:50 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 19:53:15 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 19:53:15 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:164
+2020-12-11 - 19:38:18 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 19:38:18 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:164
+2020-12-11 - 19:41:18 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:132
+2020-12-11 - 19:41:18 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/User.php:164

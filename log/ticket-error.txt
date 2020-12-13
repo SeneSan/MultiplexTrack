@@ -1,0 +1,10 @@
+
+2020-12-12 - 15:34:14 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:50
+2020-12-12 - 15:43:19 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:50
+2020-12-12 - 20:58:42 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:01:44 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:30:44 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:32:45 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:55:45 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:57:45 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
+2020-12-12 - 20:27:51 - Call to a member function prepare() on null /Users/macbook/PhpstormProjects/MultiplexTrack/app/code/Models/Ticket.php:124
