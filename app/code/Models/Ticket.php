@@ -136,4 +136,64 @@ class Ticket
             Logger::logError($err, self::LOG_FILE);
         }
     }
+
+    public static function getMostNrOfTicketsSold() {
+        $pdo = Database::getConnection();
+
+        $sql = 'select count(t.id) as nr_of_tickets_sold, m.title as movie_title from tickets as t inner join time_slots as ts on t.time_slot_id = ts.id inner join movies as m on ts.movie_id = m.id group by m.title, ts.movie_id order by nr_of_tickets_sold LIMIT 10;';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                $finalResult = [];
+                foreach ($results as $result) {
+                    $finalResult[] = [(int) $result['nr_of_tickets_sold'], $result['movie_title']];
+                }
+                return $finalResult;
+
+            } else {
+                return 'Something went wrong!';
+            }
+
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
+    }
+
+    public static function getTotalGrossAmount() {
+        $pdo = Database::getConnection();
+
+        $sql = 'select sum(t.price) as total_amount, m.title as movie_title from tickets as t
+                    inner join time_slots as ts on t.time_slot_id = ts.id
+                    inner join movies as m on ts.movie_id = m.id
+                    group by m.title, ts.movie_id order by total_amount LIMIT 10;';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                $finalResult = [];
+                foreach ($results as $result) {
+                    $finalResult[] = [(int) $result['total_amount'], $result['movie_title']];
+                }
+                return $finalResult;
+            } else {
+                return 'Something went wrong!';
+            }
+
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
+    }
 }

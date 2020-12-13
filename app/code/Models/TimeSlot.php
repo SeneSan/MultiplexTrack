@@ -283,4 +283,33 @@ class TimeSlot
             Logger::logError($err, self::LOG_FILE);
         }
     }
+
+    public static function getWeeksInTheater() {
+        $pdo = Database::getConnection();
+
+        $sql = 'select count(distinct(week(ts.start_date_time))) as nr_of_weeks, m.title as movie_title from time_slots as ts
+                    inner join movies as m on ts.movie_id = m.id
+                    group by m.title LIMIT 10;';
+
+        try {
+            $stmt = $pdo->prepare($sql);
+            $stmt->execute();
+
+            $results = $stmt->fetchAll();
+
+            if ($results) {
+                $finalResult = [];
+                foreach ($results as $result) {
+                    $finalResult[] = [(int) $result['nr_of_weeks'], $result['movie_title']];
+                }
+                return $finalResult;
+            } else {
+                return 'Something went wrong!';
+            }
+        } catch (\PDOException $e) {
+            Logger::logError($e, self::LOG_FILE);
+        } catch (\Error $err) {
+            Logger::logError($err, self::LOG_FILE);
+        }
+    }
 }
