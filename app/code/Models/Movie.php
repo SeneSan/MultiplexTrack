@@ -155,14 +155,7 @@ class Movie
         try {
             $query = $pdo->prepare($sql);
             $query->execute();
-            $results = $query->fetchAll();
-
-            $view = include __ROOT__ . 'app/frontend/Movies/movies-list.phtml';
-
-            return [
-                'message' => 'Success',
-                'html' => $view
-            ];
+            return  $query->fetchAll();
 
         } catch (\PDOException $e) {
             Logger::logError($e, self::LOG_FILE);

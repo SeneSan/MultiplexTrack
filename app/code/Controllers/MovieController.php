@@ -10,8 +10,10 @@ class MovieController
 {
     public function getMovies() {
 
-        $result = Movie::getMovies();
-        if (!$result) {
+        $results = Movie::getMovies();
+        include __ROOT__ . 'app/frontend/Movies/movies-list.phtml';
+
+        if (!$results) {
             echo OOPS_MESSAGE;
         }
     }
