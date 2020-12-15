@@ -6,15 +6,19 @@ namespace Controllers;
 
 use Models\Movie;
 
-class MovieController
+class MovieController extends Controller
 {
     public function getMovies() {
 
-        $results = Movie::getMovies();
-        include __ROOT__ . 'app/frontend/Movies/movies-list.phtml';
+        /** @var Movie $movieModel */
+        $movieModel = $this->model('Movie');
+        $data = $movieModel->getMovies();
+        $layout = $this->view('Movies/movies-list', [$data]);
 
-        if (!$results) {
+        if (!$data) {
             echo OOPS_MESSAGE;
+        } else {
+            echo $layout;
         }
     }
 
@@ -29,9 +33,12 @@ class MovieController
         $movie->setPoster($_FILES['poster']['name']);
         $movie->setDescription($_POST['description']);
 
-        header('Content-type:application/json;charset=utf-8');
-        $result = Movie::addMovie($movie);
+        /** @var Movie $movieModel */
+        $movieModel = $this->model('Movie');
+        $result = $movieModel->addMovie($movie);
+
         if ($result) {
+            header('Content-type:application/json;charset=utf-8');
             echo json_encode($result);
         } else {
             echo OOPS_MESSAGE;
@@ -40,10 +47,12 @@ class MovieController
 
     public function getMovieByTitle($title, $timeSlot) {
 
-        $movies = Movie::getMovieByTitle($title, $timeSlot);
-        header('Content-type:application/json;charset=utf-8');
+        /** @var Movie $movieModel */
+        $movieModel = $this->model('Movie');
+        $movies = $movieModel->getMovieByTitle($title, $timeSlot);
 
         if ($movies) {
+            header('Content-type:application/json;charset=utf-8');
             echo json_encode($movies);
         } else {
             echo OOPS_MESSAGE;

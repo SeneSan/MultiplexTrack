@@ -4,14 +4,16 @@ namespace Controllers;
 
 use Models\User;
 
-class UserController
+class UserController extends Controller
 {
     public function login() {
 
-        $response = User::login();
+        /** @var User $userModel */
+        $userModel = $this->model('User');
+        $response = $userModel->login();
 
         if ($response instanceof User) {
-            $_SESSION['user'] = User::login();
+            $_SESSION['user'] = $userModel->login();
         } elseif (gettype($response) === 'string') {
             echo $response;
         } else {
@@ -20,7 +22,9 @@ class UserController
     }
 
     public function register() {
-        $response = User::register();
+        /** @var User $userModel */
+        $userModel = $this->model('User');
+        $response = $userModel->register();
 
         if (gettype($response) == 'string') {
             echo $response;
@@ -30,6 +34,8 @@ class UserController
     }
 
     public function logout() {
-        User::logout();
+        /** @var User $userModel */
+        $userModel = $this->model('User');
+        $userModel->logout();
     }
 }

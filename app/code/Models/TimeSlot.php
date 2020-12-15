@@ -60,22 +60,22 @@ class TimeSlot
         $this->startDateTime = $startDateTime;
     }
 
-    public static function constructDateTime($day, $time) {
+    public function constructDateTime($day, $time) {
         $days = [1 => 'Monday', 2 => 'Tuesday', 3 => 'Wednesday', 4 => 'Thursday', 5 => 'Friday', 6 => 'Saturday', 7 => 'Sunday'];
         return date('Y-m-d H:i:s', strtotime("{$days[$day]} next week {$time}"));
     }
 
-    public static function deconstructDateTime($dateTime) {
+    public function deconstructDateTime($dateTime) {
         $day = date('N', strtotime($dateTime));
         $hour = ltrim(date('H:i', strtotime($dateTime)), '0');
         return 'day-' . $day . '-hour-' . $hour;
     }
 
-    public static function publishMovie($movieId, $timeSlot) {
+    public function publishMovie($movieId, $timeSlot) {
         $screenId = substr($timeSlot, 7, 1);
         $day = substr($timeSlot, 13, 1);
         $time = substr($timeSlot, 20);
-        $dateTime = self::constructDateTime($day, $time);
+        $dateTime = $this->constructDateTime($day, $time);
 
         $pdo = Database::getConnection();
         $sql = 'INSERT INTO time_slots (screen_id, movie_id, start_date_time) VALUE (?, ? ,?)';
@@ -89,7 +89,7 @@ class TimeSlot
                 return [
                     'error' => false,
                     'message' => 'Schedules was published successfully!',
-                    'start_date_time' => TimeSlot::getTimeSlot($dateTime)
+                    'start_date_time' => $this->getTimeSlot($dateTime)
                 ];
             }
         } catch (\PDOException $e) {
@@ -99,12 +99,12 @@ class TimeSlot
         }
     }
 
-    public static function getTimeSlots() {
+    public function getTimeSlots() {
         $pdo = Database::getConnection();
 
         $sql = "select m.id, m.title, m.duration, t.screen_id, t.start_date_time from movies as m inner join time_slots as t on m.id = t.movie_id where t.start_date_time between ? and ?;";
-        $start = TimeSlot::constructDateTime('1', '9:00');
-        $end = TimeSlot::constructDateTime('7', '18:00');
+        $start = $this->constructDateTime('1', '9:00');
+        $end = $this->constructDateTime('7', '18:00');
 
         try {
             $stmt = $pdo->prepare($sql);
@@ -120,7 +120,7 @@ class TimeSlot
                         'movie_title' => $result['title'],
                         'movie_duration' => $result['duration'],
                         'start_date_time' => $result['start_date_time'],
-                        'time_slot' => 'screen-' . $result['screen_id'] . '-' . TimeSlot::deconstructDateTime($result['start_date_time'])
+                        'time_slot' => 'screen-' . $result['screen_id'] . '-' . $this->deconstructDateTime($result['start_date_time'])
                     ];
                 }
 
@@ -143,7 +143,7 @@ class TimeSlot
         }
     }
 
-    public static function getTimeSlot($startDateTime) {
+    public function getTimeSlot($startDateTime) {
         $pdo = Database::getConnection();
 
         $sql = "SELECT * FROM time_slots WHERE start_date_time = ?";
@@ -167,7 +167,7 @@ class TimeSlot
         }
     }
 
-    public static function removeTimeSlot($startDateTime) {
+    public function removeTimeSlot($startDateTime) {
         $pdo = Database::getConnection();
 
         $sql = "DELETE FROM time_slots WHERE start_date_time = ?";
@@ -189,7 +189,7 @@ class TimeSlot
         }
     }
 
-    public static function watchTodayMovie($movieId) {
+    public function watchTodayMovie($movieId) {
         $pdo = Database::getConnection();
 
         $sql = "SELECT t.screen_id, t.start_date_time FROM time_slots as t INNER JOIN movies as m ON m.id = t.movie_id WHERE ";
@@ -232,7 +232,7 @@ class TimeSlot
         }
     }
 
-    public static function getTimeSlotByDateTime($startDateTime, $screenId, $movieId) {
+    public function getTimeSlotByDateTime($startDateTime, $screenId, $movieId) {
         $pdo = Database::getConnection();
 
         $sql = "SELECT * FROM time_slots WHERE start_date_time = ? and screen_id = ? and movie_id = ?";
@@ -255,7 +255,7 @@ class TimeSlot
         }
     }
 
-    public static function getTodayCategories() {
+    public function getTodayCategories() {
         $pdo = Database::getConnection();
 
         $sql = "SELECT m.categories FROM time_slots as ts INNER JOIN movies as m ON ts.movie_id = m.id WHERE ts.start_date_time LIKE concat(curdate(), '%')";
@@ -284,7 +284,7 @@ class TimeSlot
         }
     }
 
-    public static function getWeeksInTheater() {
+    public function getWeeksInTheater() {
         $pdo = Database::getConnection();
 
         $sql = 'select count(distinct(week(ts.start_date_time))) as nr_of_weeks, m.title as movie_title from time_slots as ts

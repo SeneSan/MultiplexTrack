@@ -9,19 +9,30 @@ use Models\Movie;
 use Models\Ticket;
 use Models\TimeSlot;
 
-class WatchTodayController
+class WatchTodayController extends Controller
 {
     public function displayMovieModal($movieId) {
 
-        $movieDetails = Movie::getMovieDetails($movieId);
-        $movieTimeSlots = TimeSlot::watchTodayMovie($movieId);
+        /** @var Movie $movieModel */
+        $movieModel = $this->model('Movie');
+        $movieDetails = $movieModel->getMovieDetails($movieId);
+
+        /** @var TimeSlot $timeSlotModel */
+        $timeSlotModel = $this->model('TimeSlot');
+        $movieTimeSlots = $timeSlotModel->watchTodayMovie($movieId);
 
         if (isset($movieDetails) && isset($movieTimeSlots)) {
-            $price = Ticket::getMoviePrice($movieDetails['type'], $movieTimeSlots['date']);
+            /** @var Ticket $ticketModel */
+            $ticketModel = $this->model('Ticket');
+            $price = $ticketModel->getMoviePrice($movieDetails['type'], $movieTimeSlots['date']);
         }
-        $modal = include __ROOT__ . 'app/frontend/WatchToday/watch-today-modal.phtml';
+
+        $data = [$movieDetails, $movieTimeSlots, $price];
+        $modal = $this->view('WatchToday/watch-today-modal', $data);
 
         if ($modal !== '\n' and strlen($modal) > 1) {
+            echo $modal;
+        } else {
             echo OOPS_MESSAGE;
         }
     }
@@ -39,20 +50,29 @@ class WatchTodayController
             $singlePrice = $_POST['single_price'];
             $totalPrice = $_POST['total_price'];
             $userId = $_SESSION['user']->getUserId();
-            $timeSlot = TimeSlot::getTimeSlotByDateTime($startDateTime, $screenId, $movieId);
+
+            /** @var TimeSlot $timeSlotModel */
+            $timeSlotModel = $this->model('TimeSlot');
+            $timeSlot = $timeSlotModel->getTimeSlotByDateTime($startDateTime, $screenId, $movieId);
 
             if (isset($timeSlot['id'])) {
 
+                /** @var Ticket $ticketModel */
+                $ticketModel = $this->model('Ticket');
+
                 foreach ($seatsArray as $seat) {
-                    $response = Ticket::sellTickets($timeSlot['id'], $seat, $singlePrice, $userId);
+                    $response = $ticketModel->sellTickets($timeSlot['id'], $seat, $singlePrice, $userId);
                 }
 
                 if ($response['error'] == false) {
 
                     $newTicket = $response['new-ticket'];
-                    $movie = Movie::getMovieDetails($timeSlot['movie_id']);
 
-                    Ticket::generatePDF($newTicket['id'], $timeSlot['screen_id'], $startDateTime, $movie, $seatsTrimmed, $totalPrice);
+                    /** @var Movie $movieModel */
+                    $movieModel = $this->model('Movie');
+                    $movie = $movieModel->getMovieDetails($timeSlot['movie_id']);
+
+                    $ticketModel->generatePDF($newTicket['id'], $timeSlot['screen_id'], $startDateTime, $movie, $seatsTrimmed, $totalPrice);
 
                     echo "<div>The following invoice was generated <a href=\"invoices/invoice_{$newTicket['id']}.pdf\">invoice_{$newTicket['id']}.pdf</div>";
 
@@ -69,8 +89,12 @@ class WatchTodayController
     public function getSeats($hour, $screenId) {
         $hour = str_replace('-', ':', $hour);
 
-        $layout = WatchTodayController::getSeatsLayout($screenId);
-        $existingSeats = Ticket::getSeats($hour, $screenId);
+        $data = [$screenId];
+        $layout = $this->view('WatchToday/select-seats', $data);
+
+        /** @var Ticket $ticketModel */
+        $ticketModel = $this->model('Ticket');
+        $existingSeats = $ticketModel->getSeats($hour, $screenId);
 
         if ($existingSeats) {
             $response = [
@@ -104,12 +128,15 @@ class WatchTodayController
             $formatCategory = null;
         }
 
-        $filteredMovies = Movie::getTodayMovies($formatHour, $formatScreenID, $formatCategory);
+        /** @var Movie $movieModel */
+        $movieModel = $this->model('Movie');
+        $filteredMovies = $movieModel->getTodayMovies($formatHour, $formatScreenID, $formatCategory);
 
         if (gettype($filteredMovies) == 'array') {
+            $data = [$filteredMovies];
             $response = [
                 'error' => false,
-                'movies_list_layout' => self::getMovieListLayout($filteredMovies)
+                'movies_list_layout' => $this->view('WatchToday/watch-today-movies-list', $data)
             ];
 
             header('Content-type:application/json;charset=utf-8');
@@ -121,19 +148,5 @@ class WatchTodayController
                 'message' => $filteredMovies
             ]);
         }
-    }
-
-    public static function getSeatsLayout($screenId) {
-        ob_start();
-        $screenID = $screenId;
-        include __ROOT__ . 'app/frontend/WatchToday/select-seats.phtml';
-        return ob_get_clean();
-    }
-
-    public static function getMovieListLayout($movies) {
-        ob_start();
-        $currentMovies = $movies;
-        include __ROOT__ . 'app/frontend/WatchToday/watch-today-movies-list.phtml';
-        return ob_get_clean();
     }
 }

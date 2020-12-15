@@ -4,6 +4,7 @@
 namespace Models;
 
 
+use Controllers\Controller;
 use PDO;
 
 class Movie
@@ -147,7 +148,7 @@ class Movie
         $this->description = $description;
     }
 
-    public static function getMovies() {
+    public function getMovies() {
 
         $pdo = Database::getConnection();
         $sql = "SELECT * FROM movies";
@@ -164,7 +165,7 @@ class Movie
         }
     }
 
-    public static function addMovie(Movie $movie) {
+    public function addMovie(Movie $movie) {
         $pdo = Database::getConnection();
 
         $sql = "INSERT INTO movies (title, year, type, duration, categories, poster, description) ";
@@ -175,7 +176,7 @@ class Movie
             $query->execute([$movie->title, $movie->year, $movie->type, $movie->duration, $movie->categories, $movie->poster, $movie->description]);
             if ($query) {
 
-                Movie::uploadPoster();
+                $this->uploadPoster();
                 return [
                     'error' => false,
                     'message' => 'Movie was added successfully!'
@@ -192,7 +193,7 @@ class Movie
         }
     }
 
-    public static function uploadPoster() {
+    public function uploadPoster() {
         $target_dir = "images/";
         $target_file = $target_dir . basename($_FILES["poster"]["name"]);
         $uploadOk = 1;
@@ -262,7 +263,7 @@ class Movie
         }
     }
 
-    public static function getMovieByTitle($title, $timeSlot) {
+    public function getMovieByTitle($title, $timeSlot) {
         $pdo = Database::getConnection();
         $sql = "SELECT * FROM movies WHERE title LIKE ?";
 
@@ -310,13 +311,16 @@ class Movie
         }
     }
 
-    public static function getValidDuration($timeSlot, $movieDuration) {
+    public function getValidDuration($timeSlot, $movieDuration) {
         $pdo = Database::getConnection();
 
         $screenId = substr($timeSlot, 7, 1);
         $day = substr($timeSlot, 13, 1);
         $time = str_replace('-', ':', substr($timeSlot, 20));
-        $dateTime = TimeSlot::constructDateTime($day, $time);
+
+        $controller  = new Controller();
+        $timeSlotModel = $controller->model('TimeSlot');
+        $dateTime = $timeSlotModel->constructDateTime($day, $time);
 
         $date = date('Y-m-d', strtotime($dateTime));
 
@@ -342,7 +346,7 @@ class Movie
         }
     }
 
-    public static function getTodayMovies($hour = null, $screenId = null, $category = null) {
+    public function getTodayMovies($hour = null, $screenId = null, $category = null) {
         $pdo = Database::getConnection();
 
         try {
@@ -412,7 +416,7 @@ class Movie
         }
     }
 
-    public static function getMovieDetails($movieId) {
+    public function getMovieDetails($movieId) {
         $pdo = Database::getConnection();
 
         $sql = "SELECT * FROM movies WHERE id = ?";

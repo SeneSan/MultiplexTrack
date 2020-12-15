@@ -4,17 +4,18 @@
 namespace Controllers;
 
 
+use Cassandra\Time;
 use Models\TimeSlot;
 
-class ScheduleController
+class ScheduleController extends Controller
 {
     public function getView() {
-        $view = include __ROOT__ . 'app/frontend/Schedules/schedules.phtml';
+        $scheduleView = $this->view('Schedules/schedules');
 
-        if ($view) {
-            return $view;
+        if ($scheduleView) {
+            echo $scheduleView;
         } else {
-            return OOPS_MESSAGE;
+            echo OOPS_MESSAGE;
         }
     }
 
@@ -25,7 +26,10 @@ class ScheduleController
             $movieId = $_POST['movie_id'];
             $timeSlot = $_POST['time_slot'];
 
-            $response = TimeSlot::publishMovie($movieId, $timeSlot);
+            /** @var TimeSlot $timeSlotModel */
+            $timeSlotModel = $this->model('TimeSlot');
+            $response = $timeSlotModel->publishMovie($movieId, $timeSlot);
+
             if ($response) {
                 header('Content-type:application/json;charset=utf-8');
                 echo json_encode($response);
@@ -36,7 +40,9 @@ class ScheduleController
     }
 
     public function getCurrentTimeSlots() {
-        $timeSlots = TimeSlot::getTimeSlots();
+        /** @var TimeSlot $timeSlotModel */
+        $timeSlotModel = $this->model('TimeSlot');
+        $timeSlots = $timeSlotModel->getTimeSlots();
         if ($timeSlots) {
             header('Content-type:application/json;charset=utf-8');
             echo json_encode($timeSlots);
@@ -48,7 +54,11 @@ class ScheduleController
     public function removeTimeSlot() {
         if (isset($_POST['remove_date_time'])) {
             $startDateTime = $_POST['remove_date_time'];
-            $response = TimeSlot::removeTimeSlot($startDateTime);
+
+            /** @var TimeSlot $timeSlotModel */
+            $timeSlotModel = $this->model('TimeSlot');
+            $response = $timeSlotModel->removeTimeSlot($startDateTime);
+
             if ($response) {
                 header('Content-type:application/json;charset=utf-8');
                 echo json_encode($response);

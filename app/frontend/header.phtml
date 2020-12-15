@@ -7,7 +7,7 @@
             <button class="open-button" onclick="openForm()">Login</button>
         </div>
     </nav>
-<?php include '/Users/macbook/PhpstormProjects/MultiplexTrack/app/frontend/User/login.phtml'; endif;?>
+<?php include __ROOT__ . 'app/frontend/User/login.phtml'; endif;?>
 
 <?php if (isset($_SESSION['user']) && $_SESSION['user']->getType() == 1) : ?>
     <!--regular user navigation header-->

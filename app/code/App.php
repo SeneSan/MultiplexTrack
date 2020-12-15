@@ -3,14 +3,13 @@
 
 class App
 {
-
     private static $head;
     private static $header;
     private static $body;
     private static $footer;
     private static $html = '';
 
-    public static function run(){
+    public static function getMainPageStructure(){
 
         self::addHead();
         self::addHeader();

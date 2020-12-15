@@ -65,15 +65,15 @@ class User
     private $phonenumber;
     private $type;
 
-    public function __construct($userId, $username, $email, $password, $phonenumber, $type)
-    {
-        $this->userId = $userId;
-        $this->username = $username;
-        $this->email = $email;
-        $this->password = $password;
-        $this->phonenumber = $phonenumber;
-        $this->type = $type;
-    }
+//    public function __construct($userId, $username, $email, $password, $phonenumber, $type)
+//    {
+//        $this->userId = $userId;
+//        $this->username = $username;
+//        $this->email = $email;
+//        $this->password = $password;
+//        $this->phonenumber = $phonenumber;
+//        $this->type = $type;
+//    }
 
     /**
      * @return mixed
@@ -123,7 +123,7 @@ class User
         $this->phonenumber = $phonenumber;
     }
 
-    public static function existingUser($username, $email) {
+    public function existingUser($username, $email) {
         $pdo = Database::getConnection();
 
         $sql = 'SELECT count(id) as nr FROM users WHERE username = ? or email = ?';
@@ -146,7 +146,7 @@ class User
         }
     }
 
-    public static function register() {
+    public function register() {
 
         $username = $_POST['reg_username'];
         $password = $_POST['reg_psw'];
@@ -159,7 +159,7 @@ class User
 
         $sql = "INSERT INTO users (username, password, email, phonenumber, type) VALUES (?, ?, ?, ?, ?)";
 
-        if (!self::existingUser($username, $email)) {
+        if (!$this->existingUser($username, $email)) {
             try {
                 $pdo->prepare($sql)->execute([$username, $passHash, $email, $phonenumber, 1]);
                 return 'User registration completed!';
@@ -173,7 +173,7 @@ class User
         }
     }
 
-    public static function login() {
+    public function login() {
 
         $username = $_POST['username'];
         $password = $_POST['psw'];
@@ -193,7 +193,15 @@ class User
                 $phonenumber = $result['phonenumber'];
                 $type = $result['type'];
 
-                return new User($userId, $username, $password, $email, $phonenumber, $type);
+                $newUser = new User();
+                $newUser->setUserId($userId);
+                $newUser->setUsername($username);
+                $newUser->setPassword($password);
+                $newUser->setEmail($email);
+                $newUser->setPhonenumber($phonenumber);
+                $newUser->setType($type);
+
+                return $newUser;
 
             } elseif (!(gettype($result) === 'boolean') && $username === $result['username']) {
                 $message = 'Incorrect credentials!';
@@ -212,7 +220,7 @@ class User
         }
     }
 
-    public static function logout() {
+    public function logout() {
         unset($_SESSION['user']);
         header('location: /');
         exit();

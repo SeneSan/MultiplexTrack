@@ -2,6 +2,15 @@
 use Controllers\WatchTodayController;
 use Models\Movie;
 use Models\TimeSlot;
+
+$controller = new \Controllers\Controller();
+
+/** @var TimeSlot $timeSlotModel */
+$timeSlotModel = $controller->model('TimeSlot');
+
+/** @var Movie $movieModel */
+$movieModel = $controller->model('Movie');
+$data = [$movieModel->getTodayMovies()];
 ?>
 
 <div id="watch-today-modal"></div>
@@ -32,8 +41,8 @@ use Models\TimeSlot;
         <label for="filter-category">Category </label>
         <select name="category" id="filter-category">
             <option value="none" selected>Not selected</option>
-            <?php if (gettype(TimeSlot::getTodayCategories()) == 'array'): ?>
-                <?php foreach (TimeSlot::getTodayCategories() as $category): ?>
+            <?php if (gettype($timeSlotModel->getTodayCategories()) == 'array'): ?>
+                <?php foreach ($timeSlotModel->getTodayCategories() as $category): ?>
                     <option value="<?php echo $category?>"><?php echo $category?></option>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -48,5 +57,5 @@ use Models\TimeSlot;
 <hr>
 <br>
 <div id="watch-today-movies-list">
-    <?php echo WatchTodayController::getMovieListLayout(Movie::getTodayMovies()); ?>
+    <?php echo $controller->view('WatchToday/watch-today-movies-list', $data); ?>
 </div>

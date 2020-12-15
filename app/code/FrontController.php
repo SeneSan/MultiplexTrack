@@ -5,7 +5,7 @@ use Interfaces\FrontControllerInterface;
 class FrontController implements FrontControllerInterface
 {
     const DEFAULT_CONTROLLER = "App";
-    const DEFAULT_ACTION     = "run";
+    const DEFAULT_ACTION     = "getMainPageStructure";
 
     protected $controller    = self::DEFAULT_CONTROLLER;
     protected $action        = self::DEFAULT_ACTION;

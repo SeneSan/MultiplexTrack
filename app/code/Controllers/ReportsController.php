@@ -7,17 +7,23 @@ namespace Controllers;
 use Models\Ticket;
 use Models\TimeSlot;
 
-class ReportsController
+class ReportsController extends Controller
 {
     public function getTicketsSold() {
-        echo json_encode(Ticket::getMostNrOfTicketsSold());
+        /** @var Ticket $ticketModel */
+        $ticketModel = $this->model('Ticket');
+        echo json_encode($ticketModel->getMostNrOfTicketsSold());
     }
 
     public function getTotalAmounts() {
-        echo json_encode(Ticket::getTotalGrossAmount());
+        /** @var Ticket $ticketModel */
+        $ticketModel = $this->model('Ticket');
+        echo json_encode($ticketModel->getTotalGrossAmount());
     }
 
     public function getWeeksInTheater() {
-        echo json_encode(TimeSlot::getWeeksInTheater());
+        /** @var TimeSlot $ticketModel */
+        $ticketModel = $this->model('TimeSlot');
+        echo json_encode($ticketModel->getWeeksInTheater());
     }
 }
